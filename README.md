@@ -1,9 +1,9 @@
-# DesignTrail-App
+
  # 📱 Custom Print & Embroidery Mobile App
 
 This mobile application allows clients to request custom printing and embroidery services by submitting artwork, browsing products, generating quotations, and communicating with contractors. Contractors and administrators can manage orders, communicate with clients, and ensure smooth operations on the platform.
 
-## 🚀 Features
+## Features
 
 ### 🔐 User Authentication & Access
 - **User Registration & Login**: Sign-up, login, logout, and password reset capabilities. Users can securely access the system using their email and password. *(Rehkopf, 2019)*
