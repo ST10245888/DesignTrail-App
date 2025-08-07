@@ -55,6 +55,3 @@ This mobile application allows clients to request custom printing and embroidery
 | PDF Generation| HTML2PDF / jsPDF / Custom |
 | Reports       | CSV/XLS Export, Charts |
 
-
-   git clone https://github.com/your-org/your-repo.git
-   cd your-repo
