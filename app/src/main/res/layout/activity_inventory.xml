@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/inventoryLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f4f4f4"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ScrollView
+        android:id="@+id/scrollInventoryContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="24dp"
+        android:layout_above="@id/bottomNavigation">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/tvInventoryTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:layout_marginBottom="32dp"
+                android:text="Add New Promotional Material"
+                android:textColor="#30B4D1"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <!-- Product Name -->
+            <EditText
+                android:id="@+id/etProductName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Product Name"
+                android:padding="14dp"
+                android:background="@android:drawable/edit_text"
+                android:textColor="#161616"
+                android:textSize="16sp"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Color -->
+            <EditText
+                android:id="@+id/etProductColor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Color (e.g. Red, Blue)"
+                android:padding="14dp"
+                android:background="@android:drawable/edit_text"
+                android:textColor="#161616"
+                android:textSize="16sp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Size -->
+            <EditText
+                android:id="@+id/etProductSize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Size (e.g. S, M, L, XL)"
+                android:padding="14dp"
+                android:background="@android:drawable/edit_text"
+                android:textColor="#161616"
+                android:textSize="16sp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Price -->
+            <EditText
+                android:id="@+id/etProductPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Price (e.g. 199.99)"
+                android:inputType="numberDecimal"
+                android:padding="14dp"
+                android:background="@android:drawable/edit_text"
+                android:textColor="#161616"
+                android:textSize="16sp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Category -->
+            <EditText
+                android:id="@+id/etProductCategory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Category (e.g. T-Shirts, Bottles)"
+                android:padding="14dp"
+                android:background="@android:drawable/edit_text"
+                android:textColor="#161616"
+                android:textSize="16sp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Image URL -->
+            <EditText
+                android:id="@+id/etProductImageUrl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Image URL (optional)"
+                android:padding="14dp"
+                android:background="@android:drawable/edit_text"
+                android:textColor="#161616"
+                android:textSize="16sp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Availability Spinner -->
+            <Spinner
+                android:id="@+id/spinnerAvailability"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:minHeight="48dp" />
+
+            <!-- Save Button -->
+            <Button
+                android:id="@+id/btnSaveProduct"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:backgroundTint="#30B4D1"
+                android:padding="16dp"
+                android:text="Save Product"
+                android:textColor="#020202" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#30B4D1"
+        app:itemIconTint="@android:color/white"
+        app:itemTextColor="@android:color/white"
+        app:menu="@menu/bottom_nav_menu" />
+
+</RelativeLayout>

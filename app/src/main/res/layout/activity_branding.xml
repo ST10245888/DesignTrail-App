@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/brandingLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f4f4f4">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="24dp"
+        android:layout_above="@id/bottomNavigation">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/tvBrandingTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Branding Method"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#1B2C4A"
+                android:layout_marginTop="80dp"
+                android:layout_marginBottom="40dp" />
+
+            <Button
+                android:id="@+id/btnPrinting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Printing"
+                android:backgroundTint="#113866"
+                android:textColor="#ffffff"
+                android:layout_marginBottom="24dp" />
+
+            <Button
+                android:id="@+id/btnEmbroidery"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Embroidery"
+                android:backgroundTint="#113866"
+                android:textColor="#ffffff"
+                android:layout_marginBottom="40dp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#123c6a"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
+        app:menu="@menu/bottom_nav_menu" />
+</RelativeLayout>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/userDashboardLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f4f4f4">
+
+    <!-- Main content -->
+    <ScrollView
+        android:id="@+id/mainContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottomNavigation"
+        android:padding="24dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/tvWelcome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Welcome to the User Dashboard!"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#1B2C4A"
+                android:layout_marginBottom="40dp"
+                android:layout_marginTop="100dp" />
+
+            <Button
+                android:id="@+id/btnCatalog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Catalog"
+                android:backgroundTint="#113866"
+                android:textColor="#ffffff"
+                android:layout_marginBottom="16dp" />
+
+            <Button
+                android:id="@+id/btnQuotations"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="My Quotations"
+                android:backgroundTint="#113866"
+                android:textColor="#ffffff"
+                android:layout_marginBottom="16dp" />
+
+            <Button
+                android:id="@+id/btnMessages"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Messaging"
+                android:backgroundTint="#113866"
+                android:textColor="#ffffff"
+                android:layout_marginBottom="40dp" />
+
+            <Button
+                android:id="@+id/btnLogout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Logout"
+                android:backgroundTint="#0f2c50"
+                android:textColor="#ffffff"
+                android:paddingHorizontal="32dp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Bottom Navigation -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#123c6a"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
+        app:menu="@menu/bottom_nav_menu" />
+</RelativeLayout>
