@@ -6,11 +6,11 @@ This mobile application allows clients to request custom printing and embroidery
 ## Features
 
 ### 🔐 User Authentication & Access
-- **User Registration & Login**: Sign-up, login, logout, and password reset capabilities. Users can securely access the system using their email and password. *(Rehkopf, 2019)*
+- **User Registration & Login**: Sign-up, login, logout, and password reset capabilities. Users can securely access the system using their email and password.
 - **Role-Based Access Control (RBAC)**: Different access levels for:
   - **Clients**: View products, submit design requests, communicate, and pay.
   - **Contractors**: View submitted designs, respond with pricing, and communicate.
-  - **Admins**: Manage users, orders, content, and platform data. *(Blackwell, 2025)*
+  - **Admins**: Manage users, orders, content, and platform data.
 
 ### 🛍️ Product Browsing & Customization
 - **Product Listing Page**: Products are displayed with filtering options (category, size, color).
