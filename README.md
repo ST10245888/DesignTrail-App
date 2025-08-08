@@ -13,20 +13,20 @@ This mobile application allows clients to request custom printing and embroidery
   - **Admins**: Manage users, orders, content, and platform data. *(Blackwell, 2025)*
 
 ### 🛍️ Product Browsing & Customization
-- **Product Listing Page**: Products are displayed with filtering options (category, size, color). *(BigCommerce, 2024)*
+- **Product Listing Page**: Products are displayed with filtering options (category, size, color).
 - **Product Details Page**: Each product includes images, descriptions, and customization options.
-- **Customization Feature**: Upload design artwork and choose between printing or embroidery. *(EasyAgile, 2024)*
+- **Customization Feature**: Upload design artwork and choose between printing or embroidery.
 
 ### 📄 Quotations & Orders
-- **Generate Quotation**: Dynamically calculate and generate downloadable quote PDFs based on selections. *(EasyAgile, 2024)*
-- **View Past Orders**: Clients can review, reorder, or consult past design requests, pricing, and statuses. *(BigCommerce, 2024)*
+- **Generate Quotation**: Dynamically calculate and generate downloadable quote PDFs based on selections.
+- **View Past Orders**: Clients can review, reorder, or consult past design requests, pricing, and statuses.
 
 ### 💬 Communication & Messaging
-- **Client-Contractor Messaging**: Secure real-time or asynchronous messaging system to discuss order details. *(Ably, 2023)*
+- **Client-Contractor Messaging**: Secure real-time or asynchronous messaging system to discuss order details.
 
 ### 💳 Secure Payments
-- **Payment Gateway Integration**: Yoco and PayFast integration for secure payment processing. *(Keenethics, 2023)*
-- **Order Confirmation & Receipts**: Clients receive confirmation notifications and downloadable receipts upon successful payment. *(BigCommerce, 2024)*
+- **Payment Gateway Integration**: Yoco and PayFast integration for secure payment processing. 
+- **Order Confirmation & Receipts**: Clients receive confirmation notifications and downloadable receipts upon successful payment.
 
 ### 🛠️ Admin Features
 - **Admin Dashboard**: Admins can:
@@ -46,11 +46,10 @@ This mobile application allows clients to request custom printing and embroidery
 | Layer         | Technology             |
 |---------------|------------------------|
 | Frontend      | Flutter / Kotlin / React Native (based on actual tech used) |
-| Backend       | Node.js / Django / Laravel / Firebase (based on actual backend) |
-| Authentication| Firebase Auth / Custom JWT / OAuth |
+| Backend       | Node.js / Kotlin / Firebase (based on actual backend) |
+| Authentication| Firebase Auth |
 | Database      | Firebase Firestore / PostgreSQL / MongoDB |
 | Cloud Storage | Firebase Storage / AWS S3 |
-| Payment       | Yoco, PayFast APIs     |
 | Messaging     | Ably, Firebase Realtime DB |
 | PDF Generation| HTML2PDF / jsPDF / Custom |
 | Reports       | CSV/XLS Export, Charts |
