@@ -5,12 +5,12 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class MaterialItem(
-    val id: String,
-    val name: String,
-    val description: String,
-    val imageUrl: String,
-    val price: Double,
-    val availableColors: List<String>,
-    val availableSizes: List<String>,
-    val category: String
+    var id: String = "",
+    var name: String = "",
+    var description: String = "",
+    var imageUrl: String = "",
+    var price: Double = 0.0,
+    var availableColors: List<String> = emptyList(),
+    var availableSizes: List<String> = emptyList(),
+    var category: String = ""
 ) : Parcelable

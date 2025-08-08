@@ -76,7 +76,13 @@ class SelectMaterialActivity : AppCompatActivity() {
         btnViewBasket.setOnClickListener {
             // Show a Toast with current basket item count
             Toast.makeText(this, "Basket has ${basket.size} items", Toast.LENGTH_SHORT).show()
+
+            // Create an Intent to navigate to the BasketActivity
+            val intent = Intent(this, BasketActivity::class.java)
+
+            startActivity(intent)
         }
+
 
         materialRecyclerView.layoutManager = LinearLayoutManager(this)
 

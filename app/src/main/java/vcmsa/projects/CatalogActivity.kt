@@ -28,6 +28,8 @@ class CatalogActivity : AppCompatActivity() {
             startActivity(Intent(this, BrandingActivity::class.java))
         }
 
+
+
         btnPromotionalMaterials.setOnClickListener {
             Toast.makeText(this, "Promotional Materials Selected", Toast.LENGTH_SHORT).show()
             startActivity(Intent(this, SelectMaterialActivity::class.java))
