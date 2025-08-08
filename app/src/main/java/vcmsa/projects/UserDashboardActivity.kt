@@ -27,8 +27,9 @@ class UserDashboardActivity : AppCompatActivity() {
         val btnMessages = findViewById<Button>(R.id.btnMessages)
         val btnLogout = findViewById<Button>(R.id.btnLogout)
         bottomNav = findViewById(R.id.bottomNavigation)
+        val btnQuotations = findViewById<Button>(R.id.btnQuotations)
 
-        // Buttons in layout
+                // Buttons in layout
         btnCatalog.setOnClickListener {
 
             Toast.makeText(this, "Catalog Clicked", Toast.LENGTH_SHORT).show()
@@ -37,9 +38,11 @@ class UserDashboardActivity : AppCompatActivity() {
         }
 
 
-        //btnQuotations.setOnClickListener {
-          //  Toast.makeText(this, "Quotations Clicked", Toast.LENGTH_SHORT).show()
-       // }
+
+        btnQuotations.setOnClickListener {
+          Toast.makeText(this, "Quotations Clicked", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, QuotationGeneratorActivity::class.java))
+        }
 
         btnMessages.setOnClickListener {
             Toast.makeText(this, "Messaging Clicked", Toast.LENGTH_SHORT).show()

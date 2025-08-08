@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/userDashboardLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="690dp"
+    android:layout_marginTop="40dp"
     android:background="#f4f4f4"
     tools:context=".activities.SelectMaterialActivity">
 
@@ -13,23 +14,23 @@
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Product Catalog"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="#1B2C4A"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
-        android:layout_centerHorizontal="true" />
+        android:text="Product Catalog"
+        android:textColor="#1B2C4A"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <!-- Buttons row below title, centered horizontally -->
     <LinearLayout
         android:id="@+id/buttonRow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
         android:layout_below="@id/tvTitle"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="12dp">
+        android:layout_marginTop="12dp"
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/btnViewBasket"
@@ -37,10 +38,10 @@
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="View Basket"
+            android:elevation="6dp"
             android:padding="12dp"
             android:src="@drawable/ic_shopping_cart"
             android:tint="#113866"
-            android:elevation="6dp"
             tools:ignore="UseAppTint" />
 
         <ImageButton
@@ -50,10 +51,10 @@
             android:layout_marginStart="24dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Logout"
+            android:elevation="6dp"
             android:padding="12dp"
             android:src="@drawable/ic_logout"
             android:tint="#113866"
-            android:elevation="6dp"
             tools:ignore="UseAppTint" />
     </LinearLayout>
 
@@ -62,12 +63,12 @@
         android:id="@+id/mainContent"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_below="@id/buttonRow"
         android:layout_above="@id/bottomNavigation"
-        android:padding="16dp"
+        android:layout_below="@id/buttonRow"
+        android:layout_alignParentBottom="true"
         android:clipToPadding="false"
-        android:paddingTop="24dp"
-        android:layout_alignParentBottom="true">
+        android:padding="16dp"
+        android:paddingTop="24dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -78,8 +79,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="12dp">
+                android:layout_marginBottom="12dp"
+                android:orientation="horizontal">
 
                 <androidx.appcompat.widget.SearchView
                     android:id="@+id/searchViewProduct"
@@ -117,7 +118,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewMaterials"
                 android:layout_width="match_parent"
-                android:layout_height="461dp"
+                android:layout_height="300dp"
                 android:nestedScrollingEnabled="false"
                 android:padding="4dp" />
 
@@ -126,9 +127,8 @@
                 android:id="@+id/btnContinue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Proceed"
-                android:layout_marginTop="16dp"
                 android:backgroundTint="#113866"
+                android:text="Proceed"
                 android:textColor="#ffffff" />
         </LinearLayout>
     </ScrollView>
