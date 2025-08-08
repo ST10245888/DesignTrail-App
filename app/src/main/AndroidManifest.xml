@@ -36,15 +36,15 @@
         <activity android:name=".activities.BrandingActivity" />
         <activity android:name=".activities.SelectMaterialActivity" />
         <activity android:name=".activities.InventoryActivity" />
+        <activity android:name=".activities.BasketActivity" />
         <!-- Modules-->
         <activity android:name=".activities.CatalogActivity"
             tools:ignore="Instantiatable,MissingClass" />
 
         <activity android:name=".activities.MessagingActivity"
             tools:ignore="Instantiatable" />
-        <!--
-        <activity android:name=".activities.ProfileActivity" />
-        <activity android:name=".activities.QuotationsActivity" />-->
+
+        <activity android:name=".activities.QuotationGeneratorActivity" />
 
     </application>
 </manifest>
