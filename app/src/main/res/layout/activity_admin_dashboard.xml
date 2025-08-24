@@ -10,7 +10,7 @@
         android:id="@+id/mainContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="24dp"
+        android:padding="23dp"
         android:layout_above="@id/bottomNavigation">
 
         <LinearLayout
@@ -55,7 +55,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="#B2DAE6"
-                android:padding="16dp"
+                android:padding="15dp"
                 android:text="Messaging"
                 android:textColor="#000000" />
 

@@ -23,7 +23,7 @@
                 android:id="@+id/tvInventoryTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="39dp"
                 android:layout_marginBottom="32dp"
                 android:text="Add New Promotional Material"
                 android:textColor="#30B4D1"
@@ -47,7 +47,7 @@
                 android:id="@+id/etProductColor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Color (e.g. Red, Blue)"
+                android:hint="Color (e.g. Red, Blue,yellow)"
                 android:padding="14dp"
                 android:background="@android:drawable/edit_text"
                 android:textColor="#161616"
@@ -109,7 +109,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
-                android:minHeight="48dp" />
+                android:minHeight="47dp" />
 
             <!-- Save Button -->
             <Button
