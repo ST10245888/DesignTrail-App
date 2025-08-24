@@ -8,12 +8,13 @@ import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import vcmsa.projects.fkj_consultants.R
+import vcmsa.projects.fkj_consultants.models.MaterialItem
 import vcmsa.projects.fkj_consultants.models.MaterialListItem
 
 class MaterialAdapter(
     private val items: List<MaterialListItem>,
     private val context: Context,
-    private val addToBasketListener: (materialId: String, quantity: Int, color: String?, size: String?) -> Unit
+    private val addToBasketListener: (material: MaterialItem, quantity: Int, color: String?, size: String?) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -26,25 +27,26 @@ class MaterialAdapter(
     }
 
     inner class MaterialViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val name: TextView = itemView.findViewById(R.id.tvName)
-        val description: TextView = itemView.findViewById(R.id.tvDescription)
-        val price: TextView = itemView.findViewById(R.id.tvPrice)
-        val image: ImageView = itemView.findViewById(R.id.imgMaterial)
-        val spinnerColor: Spinner = itemView.findViewById(R.id.spinnerColor)
-        val spinnerSize: Spinner = itemView.findViewById(R.id.spinnerSize)
-        val etQuantity: EditText = itemView.findViewById(R.id.etQuantity)
-        val btnUploadLogo: Button = itemView.findViewById(R.id.btnUploadLogo)
-        val btnAddToBasket: Button = itemView.findViewById(R.id.btnAddToBasket)
+        private val name: TextView = itemView.findViewById(R.id.tvName)
+        private val description: TextView = itemView.findViewById(R.id.tvDescription)
+        private val price: TextView = itemView.findViewById(R.id.tvPrice)
+        private val image: ImageView = itemView.findViewById(R.id.imgMaterial)
+        private val spinnerColor: Spinner = itemView.findViewById(R.id.spinnerColor)
+        private val spinnerSize: Spinner = itemView.findViewById(R.id.spinnerSize)
+        private val etQuantity: EditText = itemView.findViewById(R.id.etQuantity)
+        private val btnUploadLogo: Button = itemView.findViewById(R.id.btnUploadLogo)
+        private val btnAddToBasket: Button = itemView.findViewById(R.id.btnAddToBasket)
 
-        fun bind(material: MaterialListItem.MaterialEntry) {
-            val data = material.material
+        fun bind(entry: MaterialListItem.MaterialEntry) {
+            val data = entry.material
 
+            // Basic info
             name.text = data.name
             description.text = data.description
             price.text = "Price: R ${data.price}"
 
-            // Load image safely
-            if (!data.imageUrl.isNullOrEmpty()) {
+            // Image handling
+            if (data.imageUrl.isNotEmpty()) {
                 Picasso.get()
                     .load(data.imageUrl)
                     .placeholder(R.drawable.placeholder_image)
@@ -54,31 +56,31 @@ class MaterialAdapter(
                 image.setImageResource(R.drawable.placeholder_image)
             }
 
-            // Setup Color Spinner
+            // Color spinner
             val colorAdapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, data.availableColors)
             colorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             spinnerColor.adapter = colorAdapter
 
-            // Setup Size Spinner
+            // Size spinner
             val sizeAdapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, data.availableSizes)
             sizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             spinnerSize.adapter = sizeAdapter
 
-            // Set default quantity to 1 if empty
+            // Default quantity
             if (etQuantity.text.isNullOrBlank()) {
                 etQuantity.setText("1")
             }
 
-            // Upload logo click
+            // Upload logo (TODO: implement later)
             btnUploadLogo.setOnClickListener {
                 Toast.makeText(context, "Upload logo for ${data.name}", Toast.LENGTH_SHORT).show()
-                // TODO: Launch logo picker dialog or activity
             }
 
-            // Add to basket click
+            // Add to basket
             btnAddToBasket.setOnClickListener {
                 val quantityStr = etQuantity.text.toString()
                 val quantity = quantityStr.toIntOrNull()
+
                 if (quantity == null || quantity <= 0) {
                     Toast.makeText(context, "Please enter a valid quantity", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
@@ -87,7 +89,9 @@ class MaterialAdapter(
                 val selectedColor = spinnerColor.selectedItem as? String
                 val selectedSize = spinnerSize.selectedItem as? String
 
-                addToBasketListener(data.id, quantity, selectedColor, selectedSize)
+                // ✅ Send full MaterialItem to basket
+                addToBasketListener(data, quantity, selectedColor, selectedSize)
+
                 Toast.makeText(context, "${data.name} added to basket", Toast.LENGTH_SHORT).show()
             }
         }
@@ -119,12 +123,8 @@ class MaterialAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (val item = items[position]) {
-            is MaterialListItem.CategoryHeader -> {
-                (holder as HeaderViewHolder).tvCategory.text = item.categoryName
-            }
-            is MaterialListItem.MaterialEntry -> {
-                (holder as MaterialViewHolder).bind(item)
-            }
+            is MaterialListItem.CategoryHeader -> (holder as HeaderViewHolder).tvCategory.text = item.categoryName
+            is MaterialListItem.MaterialEntry -> (holder as MaterialViewHolder).bind(item)
         }
     }
 }

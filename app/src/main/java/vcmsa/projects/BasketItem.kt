@@ -5,13 +5,15 @@ import android.os.Parcelable
 
 data class BasketItem(
     val material: MaterialItem = MaterialItem(),
-    val quantity: Int = 1,
+    val quantity: Int = 0,
     val selectedColor: String? = null,
-    val selectedSize: String? = null
+    val selectedSize: String? = null,
+    var firebaseKey: String? = null
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readParcelable(MaterialItem::class.java.classLoader) ?: MaterialItem(),
+        parcel.readParcelable(MaterialItem::class.java.classLoader)!!,
         parcel.readInt(),
+        parcel.readString(),
         parcel.readString(),
         parcel.readString()
     )
@@ -21,6 +23,7 @@ data class BasketItem(
         parcel.writeInt(quantity)
         parcel.writeString(selectedColor)
         parcel.writeString(selectedSize)
+        parcel.writeString(firebaseKey)
     }
 
     override fun describeContents(): Int = 0

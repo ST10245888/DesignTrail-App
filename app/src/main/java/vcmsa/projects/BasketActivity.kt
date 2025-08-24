@@ -3,7 +3,6 @@ package vcmsa.projects.fkj_consultants.activities
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -14,9 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import kotlinx.parcelize.Parcelize
 import vcmsa.projects.fkj_consultants.R
-import vcmsa.projects.fkj_consultants.models.MaterialItem
+import vcmsa.projects.fkj_consultants.models.BasketItem
 
 class BasketActivity : AppCompatActivity() {
 
@@ -29,23 +27,6 @@ class BasketActivity : AppCompatActivity() {
     private lateinit var databaseRef: DatabaseReference
     private val userId: String
         get() = FirebaseAuth.getInstance().currentUser?.uid ?: "guest"
-
-    @Parcelize
-    data class BasketItem(
-        var material: MaterialItem = MaterialItem(
-            id = "",
-            name = "",
-            description = "",
-            imageUrl = "",
-            price = 0.0,
-            availableColors = listOf(),
-            availableSizes = listOf(),
-            category = ""
-        ),
-        var quantity: Int = 0,
-        var selectedColor: String? = null,
-        var selectedSize: String? = null
-    ) : Parcelable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,28 +43,25 @@ class BasketActivity : AppCompatActivity() {
         databaseRef = FirebaseDatabase.getInstance().getReference("baskets").child(userId)
         loadBasketFromFirebase()
 
-        // Button to generate the quotation
         btnGenerateQuotation.setOnClickListener {
             if (basket.isEmpty()) {
                 Toast.makeText(this, "Your basket is empty!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
-            // Create an Intent and pass basket items
             val intent = Intent(this, QuotationGeneratorActivity::class.java)
             intent.putParcelableArrayListExtra("basket_items", ArrayList(basket))
             startActivity(intent)
         }
     }
 
-    // Load the basket from Firebase
     private fun loadBasketFromFirebase() {
-        databaseRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        databaseRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 basket.clear()
-                for (itemSnap in snapshot.children) {
-                    val item = itemSnap.getValue(BasketItem::class.java)
+                snapshot.children.forEach { child ->
+                    val item = child.getValue(BasketItem::class.java)
                     if (item != null) {
+                        item.firebaseKey = child.key
                         basket.add(item)
                     }
                 }
@@ -97,13 +75,11 @@ class BasketActivity : AppCompatActivity() {
         })
     }
 
-    // Update the total price shown
     private fun updateTotalPrice() {
         val total = basket.sumOf { it.material.price * it.quantity }
         tvTotalPrice.text = "Total: R %.2f".format(total)
     }
 
-    // Adapter to display basket items
     inner class BasketAdapter(private val items: MutableList<BasketItem>) :
         RecyclerView.Adapter<BasketAdapter.BasketViewHolder>() {
 
@@ -122,29 +98,27 @@ class BasketActivity : AppCompatActivity() {
         override fun onBindViewHolder(holder: BasketViewHolder, @SuppressLint("RecyclerView") position: Int) {
             val item = items[position]
             holder.tvName.text = item.material.name
-            holder.tvDetails.text = "Color: ${item.selectedColor ?: "N/A"}, Size: ${item.selectedSize ?: "N/A"}, Qty: ${item.quantity}"
+            holder.tvDetails.text =
+                "Color: ${item.selectedColor ?: "N/A"}, Size: ${item.selectedSize ?: "N/A"}, Qty: ${item.quantity}"
             holder.tvPrice.text = "Price: R %.2f".format(item.material.price * item.quantity)
 
             holder.btnRemove.setOnClickListener {
-                // Remove the item from Firebase by item ID
-                val itemRef = databaseRef.orderByChild("material/id").equalTo(item.material.id)
-                itemRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        for (child in snapshot.children) {
-                            child.ref.removeValue()
-                        }
-                        // Remove the item from the list and notify adapter
-                        items.removeAt(position)
-                        notifyItemRemoved(position)
-                        notifyItemRangeChanged(position, items.size)
+                val key = item.firebaseKey
+                if (key.isNullOrBlank()) {
+                    Toast.makeText(this@BasketActivity, "Missing key for item", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                databaseRef.child(key).removeValue().addOnSuccessListener {
+                    val idx = holder.bindingAdapterPosition
+                    if (idx != RecyclerView.NO_POSITION) {
+                        items.removeAt(idx)
+                        notifyItemRemoved(idx)
                         updateTotalPrice()
-                        Toast.makeText(this@BasketActivity, "${item.material.name} removed from basket", Toast.LENGTH_SHORT).show()
                     }
-
-                    override fun onCancelled(error: DatabaseError) {
-                        Toast.makeText(this@BasketActivity, "Error removing item", Toast.LENGTH_SHORT).show()
-                    }
-                })
+                    Toast.makeText(this@BasketActivity, "${item.material.name} removed", Toast.LENGTH_SHORT).show()
+                }.addOnFailureListener {
+                    Toast.makeText(this@BasketActivity, "Error removing item", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 

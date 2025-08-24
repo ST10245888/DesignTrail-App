@@ -14,8 +14,8 @@
 
         <ImageView
             android:id="@+id/imgMaterial"
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:scaleType="centerCrop"
             android:src="@drawable/placeholder_image" />
 
