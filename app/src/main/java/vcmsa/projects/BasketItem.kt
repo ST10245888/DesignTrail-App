@@ -1,15 +1,16 @@
+package vcmsa.projects.fkj_consultants.models
+
 import android.os.Parcel
 import android.os.Parcelable
-import vcmsa.projects.fkj_consultants.models.MaterialItem
 
 data class BasketItem(
-    val material: MaterialItem,
-    val quantity: Int,
-    val selectedColor: String?,
-    val selectedSize: String?
+    val material: MaterialItem = MaterialItem(),
+    val quantity: Int = 1,
+    val selectedColor: String? = null,
+    val selectedSize: String? = null
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readParcelable(MaterialItem::class.java.classLoader)!!,
+        parcel.readParcelable(MaterialItem::class.java.classLoader) ?: MaterialItem(),
         parcel.readInt(),
         parcel.readString(),
         parcel.readString()

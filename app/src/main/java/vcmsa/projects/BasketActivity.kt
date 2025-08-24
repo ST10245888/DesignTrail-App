@@ -33,7 +33,7 @@ class BasketActivity : AppCompatActivity() {
     @Parcelize
     data class BasketItem(
         var material: MaterialItem = MaterialItem(
-            id = "", // Default value for the material's id
+            id = "",
             name = "",
             description = "",
             imageUrl = "",

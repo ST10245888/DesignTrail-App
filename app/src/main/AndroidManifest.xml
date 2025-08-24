@@ -43,7 +43,10 @@
         <activity android:name=".activities.CatalogActivity"
             tools:ignore="Instantiatable,MissingClass" />
         <activity android:name=".activities.QuotationGeneratorActivity" />
-
+        <activity android:name=".activities.QuotationPreviewActivity"/>
+        <activity android:name=".activities.QuotationHistoryActivity"/>
+        <activity android:name=".activities.QuotationDetailsActivity"/>
+        <activity android:name=".activities.InventoryListActivity"/>
         <!-- Chat -->
         <activity android:name=".activities.ChatListActivity" />
         <activity android:name=".activities.ChatActivity" />

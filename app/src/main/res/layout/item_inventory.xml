@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:padding="10dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+
+    <ImageView android:id="@+id/ivItemImage" android:layout_width="80dp" android:layout_height="80dp" android:scaleType="centerCrop" android:src="@drawable/placeholder_image"/>
+
+    <LinearLayout android:orientation="vertical" android:layout_marginStart="8dp" android:layout_weight="1" android:layout_width="0dp" android:layout_height="wrap_content">
+        <TextView android:id="@+id/tvItemName" android:textStyle="bold" android:text="Product" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <TextView android:id="@+id/tvItemMeta" android:text="Category • Color • Size" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <TextView android:id="@+id/tvItemPrice" android:text="R 0.00" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content">
+        <Button android:id="@+id/btnItemEdit" android:text="Edit" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <Button android:id="@+id/btnItemToggle" android:text="Set Out" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp"/>
+        <Button android:id="@+id/btnItemDelete" android:text="Delete" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp"/>
+    </LinearLayout>
+</LinearLayout>

@@ -20,7 +20,7 @@ class ChatListActivity : AppCompatActivity() {
         b = ActivityChatListBinding.inflate(layoutInflater)
         setContentView(b.root)
 
-        // ✅ Setup adapter with click listener
+        // Setup adapter with click listener
         adapter = ConversationAdapter(emptyList()) { convo ->
             val myId = vm.currentUserId  // expose from FirebaseAuth or ViewModel
             val otherUserId = convo.id.split("_").firstOrNull { it != myId } ?: convo.id
@@ -30,14 +30,14 @@ class ChatListActivity : AppCompatActivity() {
             })
         }
 
-        // ✅ Setup RecyclerView
+        // Setup RecyclerView
         b.recyclerConversations.layoutManager = LinearLayoutManager(this)
         b.recyclerConversations.adapter = adapter
 
-        // ✅ Start listening for conversations
+        // Start listening for conversations
         vm.start()
 
-        // ✅ Observe conversations safely
+        // Observe conversations safely
         vm.conversations.observe(this, Observer { list ->
             adapter.submit(list)
         })

@@ -53,7 +53,8 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-database-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
-    implementation("com.google.firebase:firebase-messaging-ktx") // ✅ Added
+    implementation("com.google.firebase:firebase-messaging-ktx")
+    implementation ("com.squareup.picasso:picasso:2.8")
 
     // AndroidX + Material Design
     implementation("androidx.core:core-ktx:1.13.1")

@@ -11,7 +11,7 @@ class ChatListViewModel : ViewModel() {
     private val _conversations = MutableLiveData<List<Conversation>>()
     val conversations: LiveData<List<Conversation>> get() = _conversations
 
-    // ✅ Firebase user ID
+    // Firebase user ID
     val currentUserId: String
         get() = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 

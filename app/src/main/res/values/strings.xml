@@ -15,6 +15,13 @@ cost-effective solutions designed to meet your brand communication goals. Our ap
 and consistently measurable results aligned with your strategic objectives.
     ]]></string>
 
-    <!-- Added missing string for ChatActivity -->
+
     <string name="send">Send</string>
+
+        <string name="generate_pdf">Generate PDF</string>
+        <string name="quotation_history">Quotation History</string>
+        <string name="open">Open</string>
+        <string name="share">Share</string>
+
+
 </resources>

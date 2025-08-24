@@ -9,8 +9,9 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- Title -->
         <TextView
-            android:text="QUOTATIONS"
+            android:text="QUOTATION DETAILS"
             android:textStyle="bold"
             android:textSize="24sp"
             android:textColor="@android:color/holo_blue_dark"
@@ -29,7 +30,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewProducts"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
             android:layout_marginBottom="16dp" />
 
         <!-- DETAILS Section -->
@@ -39,35 +40,47 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <EditText android:id="@+id/etCompanyName"
+        <EditText
+            android:id="@+id/etCompanyName"
             android:hint="Company"
+            android:enabled="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <EditText android:id="@+id/etRequesterName"
+        <EditText
+            android:id="@+id/etRequesterName"
             android:hint="Requester Name"
+            android:enabled="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <EditText android:id="@+id/etEmail"
+        <EditText
+            android:id="@+id/etEmail"
             android:hint="Email"
+            android:enabled="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress" />
 
-        <EditText android:id="@+id/etTel"
+        <EditText
+            android:id="@+id/etTel"
             android:hint="Tel"
+            android:enabled="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="phone" />
 
-        <EditText android:id="@+id/etAddress"
+        <EditText
+            android:id="@+id/etAddress"
             android:hint="Address"
+            android:enabled="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <EditText android:id="@+id/etBillTo"
+        <EditText
+            android:id="@+id/etBillTo"
             android:hint="Bill To"
+            android:enabled="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -75,6 +88,8 @@
             android:id="@+id/tvTotal"
             android:layout_marginTop="12dp"
             android:text="Total: R 0.00"
+            android:textStyle="bold"
+            android:textSize="16sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
