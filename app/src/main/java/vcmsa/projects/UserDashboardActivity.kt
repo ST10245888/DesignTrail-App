@@ -46,7 +46,7 @@ class UserDashboardActivity : AppCompatActivity() {
 
         btnMessages.setOnClickListener {
             Toast.makeText(this, "Messaging Clicked", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(this, MessagingActivity::class.java))
+            startActivity(Intent(this, ChatListActivity::class.java))
         }
 
         btnLogout.setOnClickListener {

@@ -46,11 +46,11 @@ class BrandingActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_messages -> {
-                    startActivity(Intent(this, MessagingActivity::class.java))
+                    startActivity(Intent(this, ChatListActivity::class.java))
                     true
                 }
                 R.id.nav_profile -> {
-                    startActivity(Intent(this, ProfileActivity::class.java))
+                    startActivity(Intent(this, ProfileAccountActivity::class.java))
                     true
                 }
                 else -> false

@@ -1,4 +1,4 @@
-package vcmsa.projects.fkj_consultants.adapter
+package vcmsa.projects.fkj_consultants.adapters
 
 import android.content.Context
 import android.view.LayoutInflater

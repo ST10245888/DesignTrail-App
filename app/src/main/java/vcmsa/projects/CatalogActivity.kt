@@ -37,7 +37,7 @@ class CatalogActivity : AppCompatActivity() {
 
         btnMessaging.setOnClickListener {
             Toast.makeText(this, "Messaging Selected", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(this, MessagingActivity::class.java))
+            startActivity(Intent(this, ChatListActivity::class.java))
         }
 
         // Bottom Navigation listener
@@ -57,13 +57,13 @@ class CatalogActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_messages -> {
-                    startActivity(Intent(this, MessagingActivity::class.java))
+                    startActivity(Intent(this, ChatListActivity::class.java))
                     true
                 }
-               // R.id.nav_profile -> {
-//startActivity(Intent(this, ProfileActivity::class.java))
-                 //   true
-                //}
+                R.id.nav_profile -> {
+startActivity(Intent(this, ProfileAccountActivity::class.java))
+                  true
+                }
                 else -> false
             }
         }

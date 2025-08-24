@@ -11,10 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
 import vcmsa.projects.fkj_consultants.R
-import vcmsa.projects.fkj_consultants.adapter.MaterialAdapter
 import vcmsa.projects.fkj_consultants.models.MaterialItem
 import vcmsa.projects.fkj_consultants.models.MaterialListItem
 import com.google.firebase.auth.FirebaseAuth
+import vcmsa.projects.fkj_consultants.adapters.MaterialAdapter
 
 
 class SelectMaterialActivity : AppCompatActivity() {

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FKLApplication</string>
+    <string name="app_name">FKJ Application</string>
     <string name="about_us_text"><![CDATA[
 Our Service Offering
 
@@ -14,4 +14,7 @@ We employ proven systems, specialized skills, and streamlined processes to deliv
 cost-effective solutions designed to meet your brand communication goals. Our approach ensures maximum efficiency, optimal resource use,
 and consistently measurable results aligned with your strategic objectives.
     ]]></string>
+
+    <!-- Added missing string for ChatActivity -->
+    <string name="send">Send</string>
 </resources>
