@@ -14,8 +14,8 @@ import vcmsa.projects.fkj_consultants.activities.User
 
 class RegisterActivity : AppCompatActivity() {
 
-    private lateinit var auth: FirebaseAuth
-    private lateinit var dbRef: DatabaseReference
+    lateinit var auth: FirebaseAuth
+    lateinit var dbRef: DatabaseReference
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
