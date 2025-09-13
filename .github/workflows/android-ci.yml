@@ -80,8 +80,6 @@ jobs:
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
           script: ./gradlew connectedAndroidTest --no-daemon --stacktrace
 
-
-# Secrets expected: RELEASE_KEYSTORE_BASE64, RELEASE_STORE_PASSWORD, RELEASE_KEY_ALIAS, RELEASE_KEY_PASSWORD
   release:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
