@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
-import vcmsa.projects.fkj_consultants.R
 import vcmsa.projects.fkj_consultants.databinding.ItemMessageReceivedBinding
 import vcmsa.projects.fkj_consultants.databinding.ItemMessageSentBinding
 import vcmsa.projects.fkj_consultants.models.ChatMessage
@@ -43,6 +42,7 @@ class ChatAdapter : ListAdapter<ChatMessage, RecyclerView.ViewHolder>(Diff()) {
     private class SentVH(private val b: ItemMessageSentBinding) : RecyclerView.ViewHolder(b.root) {
         fun bind(m: ChatMessage) { b.tvMessage.text = m.text }
     }
+
     private class RecVH(private val b: ItemMessageReceivedBinding) : RecyclerView.ViewHolder(b.root) {
         fun bind(m: ChatMessage) { b.tvMessage.text = m.text }
     }

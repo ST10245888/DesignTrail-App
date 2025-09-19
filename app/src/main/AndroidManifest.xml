@@ -46,7 +46,9 @@
         <activity android:name=".activities.QuotationPreviewActivity"/>
         <activity android:name=".activities.QuotationHistoryActivity"/>
         <activity android:name=".activities.QuotationDetailsActivity"/>
+        <activity android:name=".activities.QuotationViewActivity"/>
         <activity android:name=".activities.InventoryListActivity"/>
+
         <!-- Chat -->
         <activity android:name=".activities.ChatListActivity" />
         <activity android:name=".activities.ChatActivity" />

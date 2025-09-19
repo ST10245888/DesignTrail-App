@@ -5,5 +5,6 @@ data class Conversation(
     val userA: String = "",
     val userB: String = "",
     val lastMessage: String = "",
-    val lastTimestamp: Long = 0L
+    val lastTimestamp: Long = 0L,
+    val participants: List<String> = listOf()
 )

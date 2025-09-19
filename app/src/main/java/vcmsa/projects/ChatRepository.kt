@@ -1,6 +1,5 @@
 package vcmsa.projects.fkj_consultants.data
 
-
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -10,36 +9,41 @@ import kotlinx.coroutines.tasks.await
 import vcmsa.projects.fkj_consultants.models.ChatMessage
 import vcmsa.projects.fkj_consultants.models.Conversation
 
-import kotlin.math.min
-import kotlin.math.max
-
 class ChatRepository(
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance(),
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 ) {
-    private fun conversationId(a: String, b: String): String {
-        return listOf(a, b).sorted().joinToString("_")
-    }
+    private fun conversationId(a: String, b: String): String =
+        listOf(a, b).sorted().joinToString("_")
 
     suspend fun sendMessage(toUserId: String, text: String) {
         val from = auth.currentUser?.uid ?: return
         val convId = conversationId(from, toUserId)
+
+        // Message
         val msgRef = db.collection("chats").document(convId)
             .collection("messages").document()
         val message = ChatMessage(
-            id = msgRef.id, text = text, senderId = from,
-            receiverId = toUserId, timestamp = System.currentTimeMillis()
+            id = msgRef.id,
+            text = text,
+            senderId = from,
+            receiverId = toUserId,
+            timestamp = System.currentTimeMillis()
         )
+
+        // Conversation info
+        val convo = Conversation(
+            id = convId,
+            userA = listOf(from, toUserId).sorted()[0],
+            userB = listOf(from, toUserId).sorted()[1],
+            lastMessage = text,
+            lastTimestamp = message.timestamp
+        )
+
+        // Batch write
         db.runBatch { batch ->
             batch.set(msgRef, message)
-            val convo = Conversation(
-                id = convId,
-                userA = listOf(from, toUserId).sorted()[0],
-                userB = listOf(from, toUserId).sorted()[1],
-                lastMessage = text,
-                lastTimestamp = message.timestamp
-            )
-            batch.set(db.collection("chats").document(convId), convo)
+            batch.set(db.collection("conversations").document(convId), convo)
         }.await()
     }
 
@@ -58,13 +62,10 @@ class ChatRepository(
 
     fun observeConversations() = callbackFlow<List<Conversation>> {
         val me = auth.currentUser?.uid ?: run { trySend(emptyList()); close(); return@callbackFlow }
-        val reg = db.collection("chats")
-            .whereArrayContainsAny("participants", listOf(me)) // fallback if used
+        val reg = db.collection("conversations")
             .addSnapshotListener { snap, _ ->
-                @Suppress("UNCHECKED_CAST")
-                val docs = snap?.documents ?: emptyList()
-                val convos = docs.mapNotNull { it.toObject(Conversation::class.java) }
-                trySend(convos)
+                val list = snap?.toObjects(Conversation::class.java)?.sortedByDescending { it.lastTimestamp } ?: emptyList()
+                trySend(list)
             }
         awaitClose { reg.remove() }
     }

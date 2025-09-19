@@ -1,4 +1,5 @@
 package vcmsa.projects.fkj_consultants.activities
+
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -29,40 +30,28 @@ class AdminDashboardActivity : AppCompatActivity() {
         bottomNav = findViewById(R.id.bottomNavigation)
 
         btnUserQuotations.setOnClickListener {
-            Toast.makeText(this, "User Quotations: Coming soon", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, QuotationViewActivity::class.java))
         }
 
         btnInventory.setOnClickListener {
-                Toast.makeText(this, "Inventory Clicked", Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this, InventoryActivity::class.java))
-            }
-
-        btnMessaging.setOnClickListener {
-            Toast.makeText(this, "Messaging: Coming soon", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, InventoryActivity::class.java))
         }
 
+        btnMessaging.setOnClickListener {
+            startActivity(Intent(this, ChatListActivity::class.java))
+        }
+
+        // Bottom navigation handling
         bottomNav.setOnItemSelectedListener {
             when (it.itemId) {
-                R.id.nav_home -> {
-                    Toast.makeText(this, "Home Selected", Toast.LENGTH_SHORT).show()
-                    true
-                }
-                R.id.nav_catalog -> {
-                    Toast.makeText(this, "Catalog Selected", Toast.LENGTH_SHORT).show()
-                    true
-                }
-                R.id.nav_dashboard -> {
-                    Toast.makeText(this, "Dashboard Selected", Toast.LENGTH_SHORT).show()
-                    true
-                }
+                R.id.nav_home -> true
+                R.id.nav_catalog -> true
+                R.id.nav_dashboard -> true
                 R.id.nav_messages -> {
-                    Toast.makeText(this, "Messaging Selected", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, ChatListActivity::class.java))
                     true
                 }
-                R.id.nav_profile -> {
-                    Toast.makeText(this, "Profile Selected", Toast.LENGTH_SHORT).show()
-                    true
-                }
+                R.id.nav_profile -> true
                 else -> false
             }
         }

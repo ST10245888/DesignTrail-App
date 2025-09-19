@@ -2,19 +2,19 @@ package vcmsa.projects.fkj_consultants.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import vcmsa.projects.fkj_consultants.R
-import vcmsa.projects.fkj_consultants.activities.LoginActivity
 
 class UserDashboardActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var bottomNav: BottomNavigationView
+
+    private val ADMIN_UID = "Mavuso2@gmail.com"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,36 +23,41 @@ class UserDashboardActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
         val btnCatalog = findViewById<Button>(R.id.btnCatalog)
-        //val btnQuotations = findViewById<Button>(R.id.btnQuotations)
         val btnMessages = findViewById<Button>(R.id.btnMessages)
         val btnLogout = findViewById<Button>(R.id.btnLogout)
-        bottomNav = findViewById(R.id.bottomNavigation)
         val btnQuotations = findViewById<Button>(R.id.btnQuotations)
+        bottomNav = findViewById(R.id.bottomNavigation)
 
-                // Buttons in layout
         btnCatalog.setOnClickListener {
-
             Toast.makeText(this, "Catalog Clicked", Toast.LENGTH_SHORT).show()
             startActivity(Intent(this, CatalogActivity::class.java))
-        // To record information about the execution of a program (Kotlin & Spring Boot Guide, 2024)
         }
 
-
-
         btnQuotations.setOnClickListener {
-          Toast.makeText(this, "Quotations Clicked", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Quotations Clicked", Toast.LENGTH_SHORT).show()
             startActivity(Intent(this, QuotationGeneratorActivity::class.java))
         }
 
         btnMessages.setOnClickListener {
             Toast.makeText(this, "Messaging Clicked", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(this, ChatListActivity::class.java))
+
+            val currentUserId = auth.currentUser?.uid
+            if (currentUserId != null) {
+                if (currentUserId == ADMIN_UID) {
+                    startActivity(Intent(this, ChatListActivity::class.java))
+                } else {
+                    startActivity(Intent(this, ChatActivity::class.java).apply {
+                        putExtra("receiverId", ADMIN_UID)
+                    })
+                }
+            } else {
+                Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
+            }
         }
 
         btnLogout.setOnClickListener {
             auth.signOut()
             Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
-
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }
@@ -73,7 +78,17 @@ class UserDashboardActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_messages -> {
-                    Toast.makeText(this, "Messaging Selected", Toast.LENGTH_SHORT).show()
+                    // Handle bottom nav messages same as button
+                    val currentUserId = auth.currentUser?.uid
+                    if (currentUserId != null) {
+                        if (currentUserId == ADMIN_UID) {
+                            startActivity(Intent(this, ChatListActivity::class.java))
+                        } else {
+                            startActivity(Intent(this, ChatActivity::class.java).apply {
+                                putExtra("receiverId", ADMIN_UID)
+                            })
+                        }
+                    }
                     true
                 }
                 R.id.nav_profile -> {

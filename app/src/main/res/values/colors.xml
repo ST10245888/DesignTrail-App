@@ -2,4 +2,14 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Chat bubbles -->
+    <color name="chat_sent_bg">#6200EE</color> <!-- purple -->
+    <color name="chat_received_bg">#03DAC5</color> <!-- teal -->
+    <color name="chat_text_light">#FFFFFFFF</color>
+    <color name="chat_text_dark">#FF000000</color>
+
+    <color name="light_gray">#FFE0E0E0</color>
+    <color name="blue_500">#FF2196F3</color>
+    <color name="green_500">#FF4CAF50</color>
 </resources>
