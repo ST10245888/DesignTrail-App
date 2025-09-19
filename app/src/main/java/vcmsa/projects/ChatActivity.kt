@@ -5,6 +5,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import vcmsa.projects.fkj_consultants.databinding.ActivityChatBinding
 import vcmsa.projects.fkj_consultants.ui.ChatAdapter
@@ -14,7 +15,7 @@ class ChatActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityChatBinding
     private val vm: ChatViewModel by viewModels()
-    private val adapter = ChatAdapter()
+    private lateinit var adapter: ChatAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,17 +27,19 @@ class ChatActivity : AppCompatActivity() {
             return
         }
 
+        val currentUserId = vm.getCurrentUserId()
+        adapter = ChatAdapter(currentUserId)
+
         binding.recyclerMessages.layoutManager = LinearLayoutManager(this).apply { stackFromEnd = true }
         binding.recyclerMessages.adapter = adapter
 
         vm.start(otherUserId)
 
         lifecycleScope.launch {
-            vm.messages.collect { list ->
-                adapter.submitList(list) {
-                    if (adapter.itemCount > 0)
-                        binding.recyclerMessages.scrollToPosition(adapter.itemCount - 1)
-                }
+            vm.messages.collectLatest { list ->
+                adapter.submitList(list)
+                if (adapter.itemCount > 0)
+                    binding.recyclerMessages.scrollToPosition(adapter.itemCount - 1)
             }
         }
 

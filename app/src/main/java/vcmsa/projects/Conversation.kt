@@ -5,6 +5,9 @@ data class Conversation(
     val userA: String = "",
     val userB: String = "",
     val lastMessage: String = "",
-    val lastTimestamp: Long = 0L,
-    val participants: List<String> = listOf()
-)
+    val lastTimestamp: Long = 0L
+) {
+    fun getOtherUserId(myId: String): String {
+        return if (userA != myId) userA else userB
+    }
+}

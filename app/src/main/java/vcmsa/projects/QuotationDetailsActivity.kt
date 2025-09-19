@@ -62,7 +62,7 @@ class QuotationDetailsActivity : AppCompatActivity() {
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val item = items[position]
-            val product = item.product // assuming BasketItem now uses Product instead of MaterialItem
+            val product = item.product
 
             holder.tvName.text = product.name
             holder.tvDetails.text = "Qty: ${item.quantity}, Color: ${product.color}, Size: ${product.size}"

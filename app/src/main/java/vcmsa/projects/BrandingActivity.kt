@@ -1,6 +1,5 @@
 package vcmsa.projects.fkj_consultants.activities
 
-
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button

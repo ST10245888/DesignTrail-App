@@ -2,25 +2,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="12dp"
-    android:background="?attr/selectableItemBackground">
-
-    <TextView
-        android:id="@+id/tvUserId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="User ID"
-        android:textStyle="bold"
-        android:textSize="16sp" />
+    android:padding="8dp">
 
     <TextView
         android:id="@+id/tvMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Last message..."
-        android:textSize="14sp"
-        android:textColor="#555555"
-        android:paddingTop="2dp"/>
+        android:text="Message"
+        android:textSize="16sp"/>
 
     <TextView
         android:id="@+id/tvTimestamp"
@@ -28,6 +17,5 @@
         android:layout_height="wrap_content"
         android:text="12:00 PM"
         android:textSize="12sp"
-        android:textColor="#999999"
-        android:paddingTop="2dp"/>
+        android:textColor="#999999"/>
 </LinearLayout>

@@ -5,25 +5,28 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import vcmsa.projects.fkj_consultants.databinding.ItemConversationBinding
 import vcmsa.projects.fkj_consultants.models.Conversation
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ConversationAdapter(
-    private var items: List<Conversation> = emptyList(),
-    private val onClick: (Conversation) -> Unit
-) : RecyclerView.Adapter<ConversationAdapter.VH>() {
+    private var items: List<Conversation>,
+    private val clickListener: (Conversation) -> Unit
+) : RecyclerView.Adapter<ConversationAdapter.ConversationViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-        val binding = ItemConversationBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
-        )
-        return VH(binding)
+    inner class ConversationViewHolder(private val binding: ItemConversationBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: Conversation) {
+            binding.tvUserId.text = item.getOtherUserId("Mavuso2@gmail.com")
+            binding.tvMessage.text = item.lastMessage
+            binding.tvTimestamp.text = formatTimestamp(item.lastTimestamp)
+            binding.root.setOnClickListener { clickListener(item) }
+        }
     }
 
-    override fun onBindViewHolder(holder: VH, position: Int) {
-        val convo = items[position]
-        holder.bind(convo, onClick)
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        ConversationViewHolder(ItemConversationBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+
+    override fun onBindViewHolder(holder: ConversationViewHolder, position: Int) = holder.bind(items[position])
 
     override fun getItemCount(): Int = items.size
 
@@ -32,12 +35,6 @@ class ConversationAdapter(
         notifyDataSetChanged()
     }
 
-    class VH(private val b: ItemConversationBinding) : RecyclerView.ViewHolder(b.root) {
-        fun bind(convo: Conversation, onClick: (Conversation) -> Unit) {
-            // Show userB or the "other user" in the chat
-            b.tvTitle.text = convo.userB
-            b.tvSubtitle.text = convo.lastMessage
-            itemView.setOnClickListener { onClick(convo) }
-        }
-    }
+    private fun formatTimestamp(ts: Long): String =
+        SimpleDateFormat("MMM dd, hh:mm a", Locale.getDefault()).format(Date(ts))
 }

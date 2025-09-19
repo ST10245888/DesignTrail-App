@@ -11,16 +11,17 @@ import vcmsa.projects.fkj_consultants.models.Conversation
 
 class ChatRepository(
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance(),
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    val auth: FirebaseAuth = FirebaseAuth.getInstance()
 ) {
+
     private fun conversationId(a: String, b: String): String =
         listOf(a, b).sorted().joinToString("_")
 
+    /** Send a message */
     suspend fun sendMessage(toUserId: String, text: String) {
         val from = auth.currentUser?.uid ?: return
         val convId = conversationId(from, toUserId)
 
-        // Message
         val msgRef = db.collection("chats").document(convId)
             .collection("messages").document()
         val message = ChatMessage(
@@ -31,7 +32,6 @@ class ChatRepository(
             timestamp = System.currentTimeMillis()
         )
 
-        // Conversation info
         val convo = Conversation(
             id = convId,
             userA = listOf(from, toUserId).sorted()[0],
@@ -40,13 +40,13 @@ class ChatRepository(
             lastTimestamp = message.timestamp
         )
 
-        // Batch write
         db.runBatch { batch ->
             batch.set(msgRef, message)
             batch.set(db.collection("conversations").document(convId), convo)
         }.await()
     }
 
+    /** Observe messages in real-time */
     fun observeMessages(otherUserId: String) = callbackFlow<List<ChatMessage>> {
         val me = auth.currentUser?.uid ?: run { trySend(emptyList()); close(); return@callbackFlow }
         val convId = conversationId(me, otherUserId)
@@ -60,11 +60,15 @@ class ChatRepository(
         awaitClose { reg.remove() }
     }
 
+    /** Observe all conversations for current user */
     fun observeConversations() = callbackFlow<List<Conversation>> {
         val me = auth.currentUser?.uid ?: run { trySend(emptyList()); close(); return@callbackFlow }
         val reg = db.collection("conversations")
             .addSnapshotListener { snap, _ ->
-                val list = snap?.toObjects(Conversation::class.java)?.sortedByDescending { it.lastTimestamp } ?: emptyList()
+                val list = snap?.toObjects(Conversation::class.java)
+                    ?.filter { it.userA == me || it.userB == me }
+                    ?.sortedByDescending { it.lastTimestamp }
+                    ?: emptyList()
                 trySend(list)
             }
         awaitClose { reg.remove() }

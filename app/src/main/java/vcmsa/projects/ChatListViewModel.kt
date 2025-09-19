@@ -1,28 +1,37 @@
-package vcmsa.projects.fkj_consultants.activities
+package vcmsa.projects.fkj_consultants.viewmodel
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.database.*
 import vcmsa.projects.fkj_consultants.models.Conversation
 
 class ChatListViewModel : ViewModel() {
 
-    private val db = FirebaseFirestore.getInstance()
-    private val _conversations = MutableLiveData<List<Conversation>>()
-    val conversations: LiveData<List<Conversation>> get() = _conversations
+    private val dbRef = FirebaseDatabase.getInstance().reference.child("conversations")
+    val conversations = MutableLiveData<List<Conversation>>()
+    private val adminId = "Mavuso2@gmail_com"
 
     fun startAdmin() {
-        // Fetch all conversations for admin view
-        db.collection("chats")
-            .orderBy("lastTimestamp")
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    _conversations.value = emptyList()
-                    return@addSnapshotListener
+        dbRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val latestMap = mutableMapOf<String, Conversation>()
+
+                snapshot.children.forEach { convoSnapshot ->
+                    val convo = convoSnapshot.getValue(Conversation::class.java)
+                    if (convo != null && (convo.userA == adminId || convo.userB == adminId)) {
+                        val otherUserId = convo.getOtherUserId(adminId)
+                        val current = latestMap[otherUserId]
+                        if (current == null || convo.lastTimestamp > current.lastTimestamp) {
+                            latestMap[otherUserId] = convo
+                        }
+                    }
                 }
-                val list = snapshot?.toObjects(Conversation::class.java) ?: emptyList()
-                _conversations.value = list
+
+                val list = latestMap.values.sortedByDescending { it.lastTimestamp }
+                conversations.postValue(list)
             }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
     }
 }
