@@ -36,13 +36,18 @@ class BasketActivity : AppCompatActivity() {
         tvTotalPrice = findViewById(R.id.tvTotalPrice)
         btnGenerateQuotation = findViewById(R.id.btnGenerateQuotation)
 
+        // RecyclerView setup
         adapter = BasketAdapter(basket)
         recyclerViewBasket.layoutManager = LinearLayoutManager(this)
         recyclerViewBasket.adapter = adapter
 
+        // Firebase reference
         databaseRef = FirebaseDatabase.getInstance().getReference("baskets").child(userId)
+
+        // Load basket items
         loadBasketFromFirebase()
 
+        // Quotation button
         btnGenerateQuotation.setOnClickListener {
             if (basket.isEmpty()) {
                 Toast.makeText(this, "Your basket is empty!", Toast.LENGTH_SHORT).show()
@@ -70,24 +75,29 @@ class BasketActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@BasketActivity, "Error loading basket: ${error.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    this@BasketActivity,
+                    "Error loading basket: ${error.message}",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         })
     }
 
     private fun updateTotalPrice() {
-        val total = basket.sumOf { it.material.price * it.quantity }
+        val total = basket.sumOf { it.product.price * it.quantity }
         tvTotalPrice.text = "Total: R %.2f".format(total)
     }
 
+    // --- BasketAdapter ---
     inner class BasketAdapter(private val items: MutableList<BasketItem>) :
         RecyclerView.Adapter<BasketAdapter.BasketViewHolder>() {
 
-        inner class BasketViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val tvName: TextView = itemView.findViewById(R.id.tvBasketItemName)
-            val tvDetails: TextView = itemView.findViewById(R.id.tvBasketItemDetails)
-            val tvPrice: TextView = itemView.findViewById(R.id.tvBasketItemPrice)
-            val btnRemove: Button = itemView.findViewById(R.id.btnRemove)
+        inner class BasketViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+            val tvName: TextView = view.findViewById(R.id.tvBasketItemName)
+            val tvDetails: TextView = view.findViewById(R.id.tvBasketItemDetails)
+            val tvPrice: TextView = view.findViewById(R.id.tvBasketItemPrice)
+            val btnRemove: Button = view.findViewById(R.id.btnRemove)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BasketViewHolder {
@@ -97,10 +107,10 @@ class BasketActivity : AppCompatActivity() {
 
         override fun onBindViewHolder(holder: BasketViewHolder, @SuppressLint("RecyclerView") position: Int) {
             val item = items[position]
-            holder.tvName.text = item.material.name
+            holder.tvName.text = item.product.name
             holder.tvDetails.text =
-                "Color: ${item.selectedColor ?: "N/A"}, Size: ${item.selectedSize ?: "N/A"}, Qty: ${item.quantity}"
-            holder.tvPrice.text = "Price: R %.2f".format(item.material.price * item.quantity)
+                "Qty: ${item.quantity}, Color: ${item.selectedColor ?: "N/A"}, Size: ${item.selectedSize ?: "N/A"}"
+            holder.tvPrice.text = "R %.2f".format(item.product.price * item.quantity)
 
             holder.btnRemove.setOnClickListener {
                 val key = item.firebaseKey
@@ -115,7 +125,7 @@ class BasketActivity : AppCompatActivity() {
                         notifyItemRemoved(idx)
                         updateTotalPrice()
                     }
-                    Toast.makeText(this@BasketActivity, "${item.material.name} removed", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@BasketActivity, "${item.product.name} removed", Toast.LENGTH_SHORT).show()
                 }.addOnFailureListener {
                     Toast.makeText(this@BasketActivity, "Error removing item", Toast.LENGTH_SHORT).show()
                 }

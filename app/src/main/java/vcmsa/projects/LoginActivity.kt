@@ -11,7 +11,7 @@ import vcmsa.projects.fkj_consultants.R
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
-    private val adminEmail = "rankwane11@gmail.com"
+    private val adminEmail = "Mavuso2@gmail.com"
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {

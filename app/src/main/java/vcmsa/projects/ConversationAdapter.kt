@@ -34,7 +34,8 @@ class ConversationAdapter(
 
     class VH(private val b: ItemConversationBinding) : RecyclerView.ViewHolder(b.root) {
         fun bind(convo: Conversation, onClick: (Conversation) -> Unit) {
-            b.tvTitle.text = convo.id
+            // Show userB or the "other user" in the chat
+            b.tvTitle.text = convo.userB
             b.tvSubtitle.text = convo.lastMessage
             itemView.setOnClickListener { onClick(convo) }
         }

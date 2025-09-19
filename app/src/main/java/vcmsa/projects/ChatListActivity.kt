@@ -21,7 +21,7 @@ class ChatListActivity : AppCompatActivity() {
 
         adapter = ConversationAdapter(emptyList()) { convo ->
             val users = listOf(convo.userA, convo.userB)
-            val adminUid = "ADMIN_FIREBASE_UID"
+            val adminUid = "ADMIN_FIREBASE_UID" // Replace with actual admin UID
             val otherUserId = users.first { it != adminUid }
 
             startActivity(Intent(this, ChatActivity::class.java).apply {
@@ -32,7 +32,10 @@ class ChatListActivity : AppCompatActivity() {
         binding.recyclerConversations.layoutManager = LinearLayoutManager(this)
         binding.recyclerConversations.adapter = adapter
 
+        // Fetch conversations
         vm.startAdmin()
+
+        // Observe LiveData
         vm.conversations.observe(this) { list ->
             adapter.submit(list)
         }

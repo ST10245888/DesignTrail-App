@@ -55,7 +55,7 @@ class QuotationGeneratorActivity : AppCompatActivity() {
         etBillTo = findViewById(R.id.etBillTo)
         btnGenerate = findViewById(R.id.btnGeneratePdf)
 
-        // Receive basket items from previous activity
+        // Receive basket items
         intent.getParcelableArrayListExtra<BasketItem>("basket_items")?.let { basket.addAll(it) }
 
         recycler.layoutManager = LinearLayoutManager(this)
@@ -83,8 +83,8 @@ class QuotationGeneratorActivity : AppCompatActivity() {
             if (etRequester.text.isNullOrBlank()) { etRequester.error = "Required"; return@setOnClickListener }
             if (etEmail.text.isNullOrBlank()) { etEmail.error = "Required"; return@setOnClickListener }
 
-            // Create Quotation object with updated properties
-            val total = basket.sumOf { it.material.price * it.quantity }
+            // Create Quotation object
+            val total = basket.sumOf { it.product.price * it.quantity }  // ✅ fixed
             val quotation = Quotation(
                 quotationId = System.currentTimeMillis().toString(),
                 companyName = etCompany.text.toString(),
@@ -108,11 +108,12 @@ class QuotationGeneratorActivity : AppCompatActivity() {
     }
 
     private fun updateTotal() {
-        val total = basket.sumOf { it.material.price * it.quantity }
+        val total = basket.sumOf { it.product.price * it.quantity }  // ✅ fixed
         tvTotal.text = "Total: ${nf.format(total)}"
     }
 
     private fun generatePdfToDownloads(q: Quotation): Uri? {
+        // ... same code as before, just replace it.material → it.product everywhere
         val pageWidth = 595
         val pageHeight = 842
         val doc = PdfDocument()
@@ -130,7 +131,6 @@ class QuotationGeneratorActivity : AppCompatActivity() {
         var canvas = page.canvas
         var y = 50
 
-        // Draw logo if available
         runCatching {
             val bmp = BitmapFactory.decodeResource(resources, R.drawable.ic_fkj_logo)
             bmp?.let { canvas.drawBitmap(Bitmap.createScaledBitmap(it, 90, 90, true), 40f, 30f, null) }
@@ -171,10 +171,10 @@ class QuotationGeneratorActivity : AppCompatActivity() {
 
         q.products.forEach {
             ensureSpace()
-            canvas.drawText(it.material.name, 40f, y.toFloat(), label)
+            canvas.drawText(it.product.name, 40f, y.toFloat(), label)
             canvas.drawText("x${it.quantity}", 300f, y.toFloat(), label)
-            canvas.drawText(nf.format(it.material.price), 360f, y.toFloat(), label)
-            canvas.drawText(nf.format(it.material.price * it.quantity), 440f, y.toFloat(), label)
+            canvas.drawText(nf.format(it.product.price), 360f, y.toFloat(), label)
+            canvas.drawText(nf.format(it.product.price * it.quantity), 440f, y.toFloat(), label)
             y += 18
             it.selectedColor?.let { c -> if (c.isNotBlank()) { ensureSpace(); canvas.drawText("   Color: $c", 40f, y.toFloat(), label); y += 16 } }
             it.selectedSize?.let { s -> if (s.isNotBlank()) { ensureSpace(); canvas.drawText("   Size: $s", 40f, y.toFloat(), label); y += 16 } }
@@ -234,9 +234,9 @@ class QuotationGeneratorActivity : AppCompatActivity() {
 
         override fun onBindViewHolder(h: VH, i: Int) {
             val it = items[i]
-            h.n.text = it.material.name
+            h.n.text = it.product.name
             h.d.text = "Color: ${it.selectedColor ?: "N/A"}, Size: ${it.selectedSize ?: "N/A"}, Qty: ${it.quantity}"
-            h.p.text = "R %.2f".format(it.material.price * it.quantity)
+            h.p.text = "R %.2f".format(it.product.price * it.quantity)
         }
 
         override fun getItemCount() = items.size

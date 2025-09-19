@@ -1,16 +1,17 @@
 package vcmsa.projects.fkj_consultants.activities
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.FirebaseDatabase
 import vcmsa.projects.fkj_consultants.R
-import vcmsa.projects.fkj_consultants.adapters.MaterialAdapter
-
+import vcmsa.projects.fkj_consultants.models.BasketItem
 import vcmsa.projects.fkj_consultants.models.Quotation
-import vcmsa.projects.fkj_consultants.models.MaterialListItem
 
 class QuotationViewActivity : AppCompatActivity() {
 
@@ -69,17 +70,7 @@ class QuotationViewActivity : AppCompatActivity() {
             tvTotal.text = "Total: R ${quotation.total}"
             tvStatus.text = "Status: ${quotation.status}"
 
-            // Convert BasketItems to MaterialListItems for display
-            val materialListItems = quotation.products.flatMap { basketItem ->
-                listOf(MaterialListItem.MaterialEntry(basketItem.material))
-            }
-
-            recyclerViewProducts.adapter = MaterialAdapter(
-                materialListItems,
-                this
-            ) { _, _, _, _ ->
-                // Read-only view, no add to basket
-            }
+            recyclerViewProducts.adapter = BasketAdapter(quotation.products)
         }
     }
 
@@ -92,5 +83,31 @@ class QuotationViewActivity : AppCompatActivity() {
             .addOnFailureListener {
                 Toast.makeText(this, "Failed to update", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    // Adapter for showing BasketItems
+    class BasketAdapter(private val items: List<BasketItem>) : RecyclerView.Adapter<BasketAdapter.ViewHolder>() {
+
+        class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+            val tvName: TextView = view.findViewById(R.id.tvBasketItemName)
+            val tvDetails: TextView = view.findViewById(R.id.tvBasketItemDetails)
+            val tvPrice: TextView = view.findViewById(R.id.tvBasketItemPrice)
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_basket, parent, false)
+            return ViewHolder(view)
+        }
+
+        override fun getItemCount(): Int = items.size
+
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            val item = items[position]
+            val product = item.product  // BasketItem now has a 'product' field of type Product
+
+            holder.tvName.text = product.name
+            holder.tvDetails.text = "Qty: ${item.quantity}, Color: ${product.color}, Size: ${product.size}"
+            holder.tvPrice.text = "R %.2f".format(product.price * item.quantity)
+        }
     }
 }

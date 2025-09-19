@@ -12,22 +12,22 @@ import vcmsa.projects.fkj_consultants.viewmodel.ChatViewModel
 
 class ChatActivity : AppCompatActivity() {
 
-    private lateinit var b: ActivityChatBinding
+    private lateinit var binding: ActivityChatBinding
     private val vm: ChatViewModel by viewModels()
     private val adapter = ChatAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        b = ActivityChatBinding.inflate(layoutInflater)
-        setContentView(b.root)
+        binding = ActivityChatBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val otherUserId = intent.getStringExtra("receiverId") ?: run {
             finish()
             return
         }
 
-        b.recyclerMessages.layoutManager = LinearLayoutManager(this).apply { stackFromEnd = true }
-        b.recyclerMessages.adapter = adapter
+        binding.recyclerMessages.layoutManager = LinearLayoutManager(this).apply { stackFromEnd = true }
+        binding.recyclerMessages.adapter = adapter
 
         vm.start(otherUserId)
 
@@ -35,16 +35,16 @@ class ChatActivity : AppCompatActivity() {
             vm.messages.collect { list ->
                 adapter.submitList(list) {
                     if (adapter.itemCount > 0)
-                        b.recyclerMessages.scrollToPosition(adapter.itemCount - 1)
+                        binding.recyclerMessages.scrollToPosition(adapter.itemCount - 1)
                 }
             }
         }
 
-        b.btnSend.setOnClickListener {
-            val text = b.etMessage.text.toString().trim()
+        binding.btnSend.setOnClickListener {
+            val text = binding.etMessage.text.toString().trim()
             if (text.isNotEmpty()) {
                 vm.send(otherUserId, text)
-                b.etMessage.text?.clear()
+                binding.etMessage.text?.clear()
             }
         }
     }

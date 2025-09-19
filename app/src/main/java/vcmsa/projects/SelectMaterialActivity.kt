@@ -15,8 +15,8 @@ import kotlinx.coroutines.*
 import vcmsa.projects.fkj_consultants.R
 import vcmsa.projects.fkj_consultants.adapters.MaterialAdapter
 import vcmsa.projects.fkj_consultants.models.BasketItem
-import vcmsa.projects.fkj_consultants.models.MaterialItem
 import vcmsa.projects.fkj_consultants.models.MaterialListItem
+import vcmsa.projects.fkj_consultants.models.Product
 
 class SelectMaterialActivity : AppCompatActivity() {
 
@@ -32,7 +32,7 @@ class SelectMaterialActivity : AppCompatActivity() {
 
     private val databaseRef = FirebaseDatabase.getInstance().getReference("inventory")
 
-    private val fullList = mutableListOf<MaterialItem>()
+    private val fullList = mutableListOf<Product>()
     private val filteredList = mutableListOf<MaterialListItem>()
     private val basket = mutableListOf<BasketItem>()
 
@@ -47,6 +47,7 @@ class SelectMaterialActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_select_material)
 
+        // Initialize Views
         materialRecyclerView = findViewById(R.id.recyclerViewMaterials)
         categorySpinner = findViewById(R.id.spinnerCategoryFilter)
         sortFilterSpinner = findViewById(R.id.spinnerSortFilter)
@@ -56,6 +57,11 @@ class SelectMaterialActivity : AppCompatActivity() {
         btnViewBasket = findViewById(R.id.btnViewBasket)
 
         auth = FirebaseAuth.getInstance()
+
+        setupRecyclerView()
+        setupSearchView()
+        setupSortFilterSpinner()
+        fetchInventoryFromFirebase()
 
         btnLogout.setOnClickListener {
             auth.signOut()
@@ -70,43 +76,38 @@ class SelectMaterialActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        materialRecyclerView.layoutManager = LinearLayoutManager(this)
-        materialAdapter = MaterialAdapter(filteredList, this) { material, quantity, color, size ->
-            addToBasket(material, quantity, color, size)
-        }
-        materialRecyclerView.adapter = materialAdapter
-
-        setupSearchView()
-        setupSortFilterSpinner()
-        fetchInventoryFromFirebase()
-
         proceedButton.setOnClickListener {
             if (basket.isEmpty()) {
                 Toast.makeText(this, "Your basket is empty!", Toast.LENGTH_SHORT).show()
             } else {
                 val intent = Intent(this, QuotationGeneratorActivity::class.java)
-                intent.putParcelableArrayListExtra("basket", ArrayList(basket))
+                intent.putParcelableArrayListExtra("basket_items", ArrayList(basket))
                 startActivity(intent)
             }
         }
     }
 
-    private fun addToBasket(material: MaterialItem, quantity: Int, color: String?, size: String?) {
+    private fun setupRecyclerView() {
+        materialRecyclerView.layoutManager = LinearLayoutManager(this)
+        materialAdapter = MaterialAdapter(filteredList, this) { product, quantity, color, size ->
+            addToBasket(product, quantity, color, size)
+        }
+        materialRecyclerView.adapter = materialAdapter
+    }
+
+    private fun addToBasket(product: Product, quantity: Int, color: String?, size: String?) {
         val existingItem = basket.find {
-            it.material.id == material.id &&
+            it.product.productId == product.productId &&
                     it.selectedColor == color &&
                     it.selectedSize == size
         }
 
         if (existingItem != null) {
-            val updatedItem = existingItem.copy(quantity = existingItem.quantity + quantity)
-            basket.remove(existingItem)
-            basket.add(updatedItem)
+            existingItem.quantity += quantity
         } else {
-            basket.add(BasketItem(material, quantity, color, size))
+            basket.add(BasketItem(product, quantity, color, size))
         }
-
-        Toast.makeText(this, "${material.name} added to basket", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "${product.name} added to basket", Toast.LENGTH_SHORT).show()
     }
 
     private fun setupSearchView() {
@@ -141,37 +142,23 @@ class SelectMaterialActivity : AppCompatActivity() {
                     val categorySet = mutableSetOf("All")
 
                     snapshot.children.forEach { productSnapshot ->
-                        try {
-                            val id = productSnapshot.child("productId").getValue(String::class.java) ?: return@forEach
-                            val name = productSnapshot.child("name").getValue(String::class.java) ?: ""
-                            val description = productSnapshot.child("description").getValue(String::class.java) ?: ""
-                            val imageUrl = productSnapshot.child("imageUrl").getValue(String::class.java) ?: ""
-                            val price = when (val priceValue = productSnapshot.child("price").value) {
-                                is Double -> priceValue
-                                is Long -> priceValue.toDouble()
-                                is String -> priceValue.toDoubleOrNull() ?: 0.0
-                                else -> 0.0
-                            }
-                            val color = productSnapshot.child("color").getValue(String::class.java) ?: "N/A"
-                            val size = productSnapshot.child("size").getValue(String::class.java) ?: "N/A"
-                            val category = productSnapshot.child("category").getValue(String::class.java) ?: "Uncategorized"
+                        val map = productSnapshot.value as? Map<*, *> ?: return@forEach
+                        val product = Product(
+                            productId = productSnapshot.key ?: "",
+                            name = map["name"] as? String ?: "",
+                            color = map["color"] as? String ?: "",
+                            size = map["size"] as? String ?: "",
+                            price = (map["price"] as? Number)?.toDouble()
+                                ?: (map["price"] as? String)?.toDoubleOrNull()
+                                ?: 0.0,
+                            category = map["category"] as? String ?: "",
+                            imageUrl = map["imageUrl"] as? String ?: "",
+                            availability = map["availability"] as? String ?: "In Stock",
+                            timestamp = (map["timestamp"] as? Number)?.toLong() ?: 0L
+                        )
 
-                            categorySet.add(category)
-
-                            val item = MaterialItem(
-                                id = id,
-                                name = name,
-                                description = description,
-                                imageUrl = imageUrl,
-                                price = price,
-                                availableColors = listOf(color),
-                                availableSizes = listOf(size),
-                                category = category
-                            )
-                            fullList.add(item)
-                        } catch (e: Exception) {
-                            Log.e("Firebase", "Error parsing item: ${e.message}", e)
-                        }
+                        fullList.add(product)
+                        if (product.category.isNotBlank()) categorySet.add(product.category)
                     }
 
                     withContext(Dispatchers.Main) {
@@ -203,22 +190,21 @@ class SelectMaterialActivity : AppCompatActivity() {
 
     private fun applyFiltersAsync() {
         ioScope.launch {
-            val filteredMaterials = fullList.filter {
-                (currentCategory == "All" || it.category.equals(currentCategory, ignoreCase = true)) &&
-                        it.name.contains(currentSearchText, ignoreCase = true)
+            val filtered = fullList.filter {
+                (currentCategory == "All" || it.category.equals(currentCategory, true)) &&
+                        it.name.contains(currentSearchText, true)
             }
 
-            val sortedMaterials = when (currentSortOption) {
-                "Price: Low to High" -> filteredMaterials.sortedBy { it.price }
-                "Price: High to Low" -> filteredMaterials.sortedByDescending { it.price }
-                else -> filteredMaterials
+            val sorted = when (currentSortOption) {
+                "Price: Low to High" -> filtered.sortedBy { it.price }
+                "Price: High to Low" -> filtered.sortedByDescending { it.price }
+                else -> filtered
             }
 
             val groupedList = mutableListOf<MaterialListItem>()
-            val grouped = sortedMaterials.groupBy { it.category }
-            grouped.forEach { (category, items) ->
-                groupedList.add(MaterialListItem.CategoryHeader(category))
-                groupedList.addAll(items.map { MaterialListItem.MaterialEntry(it) })
+            sorted.groupBy { it.category }.forEach { (cat, products) ->
+                groupedList.add(MaterialListItem.CategoryHeader(cat))
+                groupedList.addAll(products.map { MaterialListItem.MaterialEntry(it) })
             }
 
             withContext(Dispatchers.Main) {
