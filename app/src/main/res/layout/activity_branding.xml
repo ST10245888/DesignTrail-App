@@ -1,61 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/brandingLayout"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
     android:background="#f4f4f4">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="23dp"
-        android:layout_above="@id/bottomNavigation">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center_horizontal">
-
-            <TextView
-                android:id="@+id/tvBrandingTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Select Branding Method"
-                android:textSize="19sp"
-                android:textStyle="bold"
-                android:textColor="#1B2C4A"
-                android:layout_marginTop="80dp"
-                android:layout_marginBottom="40dp" />
-
-            <Button
-                android:id="@+id/btnPrinting"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Printing"
-                android:backgroundTint="#113866"
-                android:textColor="#ffffff"
-                android:layout_marginBottom="24dp" />
-
-            <Button
-                android:id="@+id/btnEmbroidery"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Embroidery"
-                android:backgroundTint="#113866"
-                android:textColor="#ffffff"
-                android:layout_marginBottom="40dp" />
-        </LinearLayout>
-    </ScrollView>
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigation"
+    <!-- Toggle buttons -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="#123c6a"
-        app:itemIconTint="@color/white"
-        app:itemTextColor="@color/white"
-        app:menu="@menu/bottom_nav_menu" />
-</RelativeLayout>
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="20dp">
+
+        <Button
+            android:id="@+id/btnShowPrinting"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Printing" />
+
+        <Button
+            android:id="@+id/btnShowEmbroidery"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Embroidery"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
+
+    <!-- Printing section -->
+    <LinearLayout
+        android:id="@+id/sectionPrinting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_printing"
+            android:contentDescription="Printing Sample" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Printing Services: High-quality screen printing and digital printing for t-shirts, banners, and promotional items. Choose vibrant colors and upload your design."
+            android:padding="8dp"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btnQuotePrinting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Request Printing Quote"
+            android:layout_marginTop="10dp" />
+    </LinearLayout>
+
+    <!-- Embroidery section -->
+    <LinearLayout
+        android:id="@+id/sectionEmbroidery"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_embroidery"
+            android:contentDescription="Embroidery Sample" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Embroidery Services: Durable and elegant stitching for uniforms, caps, and bags. Select thread colors and upload your logo for premium branding."
+            android:padding="8dp"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btnQuoteEmbroidery"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Request Embroidery Quote"
+            android:layout_marginTop="10dp" />
+    </LinearLayout>
+
+</LinearLayout>

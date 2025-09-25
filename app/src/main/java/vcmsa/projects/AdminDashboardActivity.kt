@@ -30,7 +30,7 @@ class AdminDashboardActivity : AppCompatActivity() {
         bottomNav = findViewById(R.id.bottomNavigation)
 
         btnUserQuotations.setOnClickListener {
-            startActivity(Intent(this, QuotationViewActivity::class.java))
+            startActivity(Intent(this, AdminQuotationListActivity::class.java))
         }
 
         btnInventory.setOnClickListener {

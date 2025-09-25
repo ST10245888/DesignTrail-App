@@ -15,16 +15,8 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
-        externalNativeBuild {
-            cmake {
-                cppFlags += ""
-            }
-        }
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
@@ -34,6 +26,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
         }
     }
 
@@ -48,24 +42,26 @@ android {
 
     buildFeatures {
         viewBinding = true
-    }
-    externalNativeBuild {
-        cmake {
-            path = file("src/main/cpp/CMakeLists.txt")
-            version = "3.22.1"
-        }
+        buildConfig = true
     }
 }
 
 dependencies {
-    // Firebase (BOM to keep versions aligned)
-    implementation(platform("com.google.firebase:firebase-bom:33.2.0"))
+    // 🔹 Firebase BOM for consistent versions
+    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
+
+    // Firebase Core
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-database-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
     implementation("com.google.firebase:firebase-messaging-ktx")
-    implementation ("com.squareup.picasso:picasso:2.8")
+    implementation("com.google.firebase:firebase-analytics-ktx")
+
+    // Firebase App Check
+    implementation("com.google.firebase:firebase-appcheck-ktx")
+    implementation("com.google.firebase:firebase-appcheck-debug")
+    implementation("com.google.firebase:firebase-appcheck-playintegrity")
 
     // AndroidX + Material Design
     implementation("androidx.core:core-ktx:1.13.1")
@@ -76,29 +72,25 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("androidx.cardview:cardview:1.0.0")
 
-    // Lifecycle + ViewModel + LiveData
+    // Lifecycle
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.3")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3")
 
-    // Coroutines for async work
+    // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 
-    // Image loading (Glide)
+    // Image Loading
     implementation("com.github.bumptech.glide:glide:4.16.0")
-
-    // Circle ImageView
+    implementation("com.squareup.picasso:picasso:2.8")
     implementation("de.hdodenhof:circleimageview:3.1.0")
-    implementation ("com.squareup.picasso:picasso:2.8")
 
-    // Tests
+    // Testing
     testImplementation("junit:junit:4.13.2")
-    testImplementation ("org.mockito:mockito-core:4.10.0")
-    testImplementation ("org.mockito:mockito-inline:4.10.0")
-    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
-
-    testImplementation ("org.robolectric:robolectric:4.10.3")
-
+    testImplementation("org.mockito:mockito-core:4.10.0")
+    testImplementation("org.mockito:mockito-inline:4.10.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("org.robolectric:robolectric:4.10.3")
 
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")

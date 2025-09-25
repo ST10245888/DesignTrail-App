@@ -2,65 +2,95 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Permissions -->
+    <!-- ✅ Required permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Optional: For Firebase Messaging on Android 13+ -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
-        android:allowBackup="true"
-        android:dataExtractionRules="@xml/data_extraction_rules"
-        android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.FKJ_Consultants"
-        tools:targetApi="31">
+        android:name=".MyApplication"
+        android:allowBackup="false"
+    android:dataExtractionRules="@xml/data_extraction_rules"
+    android:fullBackupContent="false"
+    android:icon="@mipmap/ic_launcher"
+    android:label="@string/app_name"
+    android:roundIcon="@mipmap/ic_launcher_round"
+    android:supportsRtl="true"
+    android:theme="@style/Theme.FKJ_Consultants"
+    android:usesCleartextTraffic="false"
+    tools:targetApi="34">
 
-        <!-- Launcher -->
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+    <!-- Main Launcher -->
+    <activity
+        android:name=".MainActivity"
+        android:exported="true">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
 
-        <!-- Auth -->
-        <activity android:name=".activities.LoginActivity" />
-        <activity android:name=".activities.RegisterActivity" />
+    <!-- Auth -->
+    <activity android:name=".activities.LoginActivity"
+        android:exported="false" />
+    <activity android:name=".activities.RegisterActivity"
+        android:exported="false" />
+    <activity android:name=".activities.PromotionalMaterialsActivity"
+        android:exported="false" />
 
-        <!-- Dashboards -->
-        <activity android:name=".activities.UserDashboardActivity" />
-        <activity android:name=".activities.AdminDashboardActivity" />
-        <activity android:name=".activities.BrandingActivity" />
-        <activity android:name=".activities.SelectMaterialActivity" />
-        <activity android:name=".activities.InventoryActivity" />
-        <activity android:name=".activities.BasketActivity" />
-        <activity android:name=".activities.ProfileAccountActivity" />
-        <!-- Modules -->
-        <activity android:name=".activities.CatalogActivity"
-            tools:ignore="Instantiatable,MissingClass" />
-        <activity android:name=".activities.QuotationGeneratorActivity" />
-        <activity android:name=".activities.QuotationPreviewActivity"/>
-        <activity android:name=".activities.QuotationHistoryActivity"/>
-        <activity android:name=".activities.QuotationDetailsActivity"/>
-        <activity android:name=".activities.QuotationViewActivity"/>
-        <activity android:name=".activities.InventoryListActivity"/>
+    <!-- Dashboards -->
+    <activity android:name=".activities.UserDashboardActivity"
+        android:exported="false" />
+    <activity android:name=".activities.AdminDashboardActivity"
+        android:exported="false" />
+    <activity android:name=".activities.BrandingActivity"
+        android:exported="false" />
+    <activity android:name=".activities.InventoryActivity"
+        android:exported="false" />
+    <activity android:name=".activities.ProfileAccountActivity"
+        android:exported="false" />
 
-        <!-- Chat -->
-        <activity android:name=".activities.ChatListActivity" />
-        <activity android:name=".activities.ChatActivity" />
+    <!-- ✅ Modules -->
+    <activity android:name=".activities.CatalogActivity"
+        android:exported="false"
+        tools:ignore="Instantiatable,MissingClass" />
+    <activity android:name=".activities.QuotationActivity"
+        android:exported="false" />
+    <activity android:name=".activities.QuotationViewerActivity"
+        android:exported="false" />
+    <activity android:name=".activities.QuoteRequestActivity"
+        android:exported="false" />
+    <activity android:name=".activities.UserQuotationViewActivity"
+        android:exported="false" />
+    <activity android:name=".activities.AddProductActivity"
+        android:exported="false" />
+    <activity android:name=".activities.AdminQuotationListActivity"
+        android:exported="false" />
+    <activity android:name=".activities.AdminQuotationViewActivity"
+        android:exported="false" />
 
-        <!-- Firebase Messaging Service -->
-        <service
-            android:name=".services.AppFirebaseMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
+    <!-- Chat -->
+    <activity android:name=".activities.ChatListActivity"
+        android:exported="false" />
+    <activity android:name=".activities.ChatActivity"
+        android:exported="false" />
 
-    </application>
-</manifest>
+    <!-- Firebase Messaging Service -->
+    <service
+        android:name=".services.AppFirebaseMessagingService"
+        android:exported="false"
+        android:permission="com.google.android.c2dm.permission.SEND">
+        <intent-filter>
+            <action android:name="com.google.firebase.MESSAGING_EVENT" />
+        </intent-filter>
+    </service>
+
+    <!-- Firebase App Check (Play Integrity / Debug) -->
+    <meta-data
+        android:name="firebase_app_check_service"
+        android:value="playintegrity" />
+
+</application>
+    </manifest>

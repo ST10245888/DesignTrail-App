@@ -2,58 +2,53 @@ package vcmsa.projects.fkj_consultants.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
-import android.widget.Toast
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import vcmsa.projects.fkj_consultants.R
 
 class BrandingActivity : AppCompatActivity() {
 
-    private lateinit var bottomNav: BottomNavigationView
+    private lateinit var sectionPrinting: LinearLayout
+    private lateinit var sectionEmbroidery: LinearLayout
+    private lateinit var btnPrinting: Button
+    private lateinit var btnEmbroidery: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_branding)
 
-        val btnPrinting = findViewById<Button>(R.id.btnPrinting)
-        val btnEmbroidery = findViewById<Button>(R.id.btnEmbroidery)
-        bottomNav = findViewById(R.id.bottomNavigation)
+        sectionPrinting = findViewById(R.id.sectionPrinting)
+        sectionEmbroidery = findViewById(R.id.sectionEmbroidery)
+        btnPrinting = findViewById(R.id.btnShowPrinting)
+        btnEmbroidery = findViewById(R.id.btnShowEmbroidery)
 
+        // Toggle between Printing and Embroidery
         btnPrinting.setOnClickListener {
-            Toast.makeText(this, "Printing selected", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this, SelectMaterialActivity::class.java)
-            intent.putExtra("brandingType", "Printing")
-            startActivity(intent)
+            sectionPrinting.visibility = View.VISIBLE
+            sectionEmbroidery.visibility = View.GONE
         }
 
         btnEmbroidery.setOnClickListener {
-            Toast.makeText(this, "Embroidery selected", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this, SelectMaterialActivity::class.java)
-            intent.putExtra("brandingType", "Embroidery")
+            sectionEmbroidery.visibility = View.VISIBLE
+            sectionPrinting.visibility = View.GONE
+        }
+
+        // Open QuoteRequestActivity for Printing
+        val btnQuotePrinting = findViewById<Button>(R.id.btnQuotePrinting)
+        btnQuotePrinting.setOnClickListener {
+            val intent = Intent(this, QuoteRequestActivity::class.java)
+            intent.putExtra("SERVICE_TYPE", "Printing")
             startActivity(intent)
         }
 
-        bottomNav.setOnItemSelectedListener {
-            when (it.itemId) {
-                R.id.nav_home -> {
-                    startActivity(Intent(this, UserDashboardActivity::class.java))
-                    true
-                }
-                R.id.nav_catalog -> {
-                    startActivity(Intent(this, CatalogActivity::class.java))
-                    true
-                }
-                R.id.nav_messages -> {
-                    startActivity(Intent(this, ChatListActivity::class.java))
-                    true
-                }
-                R.id.nav_profile -> {
-                    startActivity(Intent(this, ProfileAccountActivity::class.java))
-                    true
-                }
-                else -> false
-            }
+        // Open QuoteRequestActivity for Embroidery
+        val btnQuoteEmbroidery = findViewById<Button>(R.id.btnQuoteEmbroidery)
+        btnQuoteEmbroidery.setOnClickListener {
+            val intent = Intent(this, QuoteRequestActivity::class.java)
+            intent.putExtra("SERVICE_TYPE", "Embroidery")
+            startActivity(intent)
         }
     }
 }

@@ -1,6 +1,5 @@
 package vcmsa.projects.fkj_consultants.activities
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.widget.*
@@ -11,9 +10,13 @@ import vcmsa.projects.fkj_consultants.R
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
-    private val adminEmail = "Mavuso2@gmail.com"
 
-    @SuppressLint("MissingInflatedId")
+    // Trusted admin emails (case-insensitive)
+    private val adminEmails = listOf(
+        "kush@gmail.com",
+        "keitumetse01@gmail.com"
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -28,15 +31,22 @@ class LoginActivity : AppCompatActivity() {
             val email = etUsername.text.toString().trim()
             val password = etPassword.text.toString().trim()
 
+            // Validate inputs
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "All fields required", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
+            // Sign out any cached user
+            auth.signOut()
+
+            // Firebase login
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        if (email == adminEmail) {
+                    val currentUser = auth.currentUser
+                    if (task.isSuccessful && currentUser != null) {
+                        // Case-insensitive check for admin emails
+                        if (adminEmails.any { it.equals(currentUser.email, ignoreCase = true) }) {
                             Toast.makeText(this, "Admin Login Successful", Toast.LENGTH_SHORT).show()
                             startActivity(Intent(this, AdminDashboardActivity::class.java))
                         } else {
@@ -45,7 +55,11 @@ class LoginActivity : AppCompatActivity() {
                         }
                         finish()
                     } else {
-                        Toast.makeText(this, "Login Failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this,
+                            "Invalid email or password: ${task.exception?.message}",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
         }

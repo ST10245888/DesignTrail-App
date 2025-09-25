@@ -20,6 +20,8 @@ import vcmsa.projects.fkj_consultants.R
 class AppFirebaseMessagingService() : FirebaseMessagingService(), Parcelable {
 
     constructor(parcel: Parcel) : this()
+
+    // 🔔 Handle incoming push notification
     override fun onMessageReceived(msg: RemoteMessage) {
         val title = msg.notification?.title ?: "New message"
         val body = msg.notification?.body ?: ""
@@ -37,7 +39,7 @@ class AppFirebaseMessagingService() : FirebaseMessagingService(), Parcelable {
 
         // Build notification
         val n = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.ic_message)
+            .setSmallIcon(R.drawable.ic_message) // ✅ make sure you have this drawable
             .setContentTitle(title)
             .setContentText(body)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -63,6 +65,7 @@ class AppFirebaseMessagingService() : FirebaseMessagingService(), Parcelable {
             .notify(System.currentTimeMillis().toInt(), n)
     }
 
+    // 🔑 Handle new FCM token
     override fun onNewToken(token: String) {
         super.onNewToken(token)
 

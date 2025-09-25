@@ -1,19 +1,21 @@
-package vcmsa.projects.fkj_consultants.models
+package vcmsa.projects.fkj_consultants.activities
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
-
-@Parcelize
 data class Quotation(
-    val quotationId: String = "",
+    var id: String = "",            // Firestore document ID
+    val userId: String = "",
     val companyName: String = "",
-    val requesterName: String = "",
-    val email: String = "",
-    val tel: String = "",
+    val requesterName: String = "", // Optional: user's name
     val address: String = "",
+    val email: String = "",
+    val phone: String = "",
     val billTo: String = "",
-    val total: Double = 0.0,
-    val status: String = "Pending",
-    val products: List<BasketItem> = emptyList(),
-    val timestamp: Long = System.currentTimeMillis()
-) : Parcelable
+    val serviceType: String = "",   // Service requested
+    val quantity: Int = 0,          // Number of items
+    val color: String = "",         // Selected color
+    val notes: String = "",         // Additional notes
+    val fileName: String = "",
+    val filePath: String = "",
+    val subtotal: Double = 0.0,
+    val timestamp: Long = 0L,
+    val status: String = "Pending"  // Pending, Approved, Rejected
+)

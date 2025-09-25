@@ -11,10 +11,13 @@ import vcmsa.projects.fkj_consultants.R
 
 class UserDashboardActivity : AppCompatActivity() {
 
+    companion object {
+        // Replace with your actual Firebase admin UID
+        private const val ADMIN_UID = "Mavuso2@gmail.com"
+    }
+
     private lateinit var auth: FirebaseAuth
     private lateinit var bottomNav: BottomNavigationView
-
-    private val ADMIN_UID = "Mavuso2@gmail.com"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,17 +28,16 @@ class UserDashboardActivity : AppCompatActivity() {
         val btnCatalog = findViewById<Button>(R.id.btnCatalog)
         val btnMessages = findViewById<Button>(R.id.btnMessages)
         val btnLogout = findViewById<Button>(R.id.btnLogout)
-        val btnQuotations = findViewById<Button>(R.id.btnQuotations)
         bottomNav = findViewById(R.id.bottomNavigation)
+        val btnQuotations = findViewById<Button>(R.id.btnQuotations)
 
+        // Buttons in layout
         btnCatalog.setOnClickListener {
-            Toast.makeText(this, "Catalog Clicked", Toast.LENGTH_SHORT).show()
             startActivity(Intent(this, CatalogActivity::class.java))
         }
 
         btnQuotations.setOnClickListener {
-            Toast.makeText(this, "Quotations Clicked", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(this, QuotationGeneratorActivity::class.java))
+            startActivity(Intent(this, QuotationActivity::class.java))
         }
 
         btnMessages.setOnClickListener {
@@ -58,6 +60,7 @@ class UserDashboardActivity : AppCompatActivity() {
         btnLogout.setOnClickListener {
             auth.signOut()
             Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
+
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }
@@ -78,17 +81,7 @@ class UserDashboardActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_messages -> {
-                    // Handle bottom nav messages same as button
-                    val currentUserId = auth.currentUser?.uid
-                    if (currentUserId != null) {
-                        if (currentUserId == ADMIN_UID) {
-                            startActivity(Intent(this, ChatListActivity::class.java))
-                        } else {
-                            startActivity(Intent(this, ChatActivity::class.java).apply {
-                                putExtra("receiverId", ADMIN_UID)
-                            })
-                        }
-                    }
+                    Toast.makeText(this, "Messaging Selected", Toast.LENGTH_SHORT).show()
                     true
                 }
                 R.id.nav_profile -> {

@@ -1,29 +1,22 @@
 package vcmsa.projects.fkj_consultants.activities
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
 import vcmsa.projects.fkj_consultants.R
-import vcmsa.projects.fkj_consultants.activities.User
 
 class RegisterActivity : AppCompatActivity() {
 
-    lateinit var auth: FirebaseAuth
-    lateinit var dbRef: DatabaseReference
+    private lateinit var auth: FirebaseAuth
 
-    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
         auth = FirebaseAuth.getInstance()
-        dbRef = FirebaseDatabase.getInstance().getReference("Users")
 
         val etFirstName = findViewById<EditText>(R.id.etFirstName)
         val etLastName = findViewById<EditText>(R.id.etLastName)
@@ -55,32 +48,34 @@ class RegisterActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            if (password.length < 6) {
-                Toast.makeText(this, "Password too short", Toast.LENGTH_SHORT).show()
+            val passwordRegex = Regex("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$")
+            if (!password.matches(passwordRegex)) {
+                Toast.makeText(this, "Password must be 8+ chars with letters & numbers", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
 
-            // Register user with Firebase Authentication
             auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        val userId = auth.currentUser?.uid
-                        val timestamp = System.currentTimeMillis().toString()
+                        val firebaseUser: FirebaseUser? = auth.currentUser
+                        val userId = firebaseUser?.uid ?: return@addOnCompleteListener
 
                         val user = User(
-                            userId = userId ?: "",
+                            userId = userId,
                             firstName = firstName,
                             lastName = lastName,
                             username = username,
                             email = email,
                             address = address,
-                            createdAt = timestamp,
-                            lastLogin = timestamp
+                            createdAt = System.currentTimeMillis().toString(),
+                            lastLogin = System.currentTimeMillis().toString()
                         )
 
-                        dbRef.child(userId!!).setValue(user)
+                        FirebaseDatabase.getInstance().getReference("Users")
+                            .child(userId)
+                            .setValue(user)
                             .addOnSuccessListener {
-                                Toast.makeText(this, "User registered successfully", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this, "Registration successful", Toast.LENGTH_SHORT).show()
                             }
                             .addOnFailureListener {
                                 Toast.makeText(this, "DB Error: ${it.message}", Toast.LENGTH_SHORT).show()
