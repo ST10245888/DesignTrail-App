@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:padding="12dp" android:layout_width="match_parent" android:layout_height="match_parent">
+    <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+        <TextView android:text="Add / Edit Product" android:textSize="20sp" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="12dp"/>
+        <ImageView android:id="@+id/ivImagePreview" android:src="@drawable/ic_add" android:layout_width="120dp" android:layout_height="120dp" android:layout_gravity="center"/>
+        <Button android:id="@+id/btnPickImage" android:text="Pick Image" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp"/>
+
+        <EditText
+            android:id="@+id/etProductImageUrl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Or paste image URL"
+            android:inputType="textUri"
+            android:minHeight="48dp" />
+
+        <EditText
+            android:id="@+id/etProductName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Product name"
+            android:minHeight="48dp" />
+
+        <EditText
+            android:id="@+id/etProductColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Color(s) (comma separated)"
+            android:minHeight="48dp" />
+
+        <EditText
+            android:id="@+id/etProductSize"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Size(s) (comma separated)"
+            android:minHeight="48dp" />
+
+        <EditText
+            android:id="@+id/etProductPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Price (e.g. 199.99)"
+            android:inputType="numberDecimal"
+            android:minHeight="48dp" />
+
+        <EditText
+            android:id="@+id/etProductCategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Category"
+            android:minHeight="48dp" />
+
+        <Spinner
+            android:id="@+id/spinnerAvailability"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:minHeight="48dp" />
+        <Button android:id="@+id/btnSaveProduct" android:text="Save Product" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp"/>
+    </LinearLayout>
+</ScrollView>

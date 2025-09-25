@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#f4f4f4">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Service Title -->
+        <TextView
+            android:id="@+id/txtServiceType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Quote Request"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:paddingBottom="12dp" />
+
+        <!-- Company Details -->
+        <EditText
+            android:id="@+id/edtCompanyName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Company Name"
+            android:layout_marginBottom="12dp" />
+
+        <EditText
+            android:id="@+id/edtAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Address"
+            android:layout_marginBottom="12dp" />
+
+        <EditText
+            android:id="@+id/edtEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            android:layout_marginBottom="12dp" />
+
+        <EditText
+            android:id="@+id/edtPhone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Phone"
+            android:inputType="phone"
+            android:layout_marginBottom="12dp" />
+
+        <EditText
+            android:id="@+id/edtBillTo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Bill To"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Quantity -->
+        <EditText
+            android:id="@+id/edtQuantity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Quantity"
+            android:inputType="number"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Colors Dropdown -->
+        <Spinner
+            android:id="@+id/spinnerColors"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Notes -->
+        <EditText
+            android:id="@+id/edtNotes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Additional Notes"
+            android:layout_marginBottom="12dp"
+            android:minLines="3"
+            android:gravity="top"
+            android:inputType="textMultiLine" />
+
+        <!-- File Upload -->
+        <Button
+            android:id="@+id/btnUploadDesign"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Upload Design/Logo"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/txtFileSelected"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No file selected"
+            android:textSize="14sp"
+            android:paddingBottom="16dp" />
+
+        <!-- Submit -->
+        <Button
+            android:id="@+id/btnSubmit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Submit Quote Request" />
+
+    </LinearLayout>
+</ScrollView>
