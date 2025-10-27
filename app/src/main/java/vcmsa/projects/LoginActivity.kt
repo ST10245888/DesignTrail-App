@@ -1,11 +1,13 @@
-package vcmsa.projects.fkj_consultants.activities
+/*package vcmsa.projects.fkj_consultants.activities*/
+
+package student.projects.fkj_consultants_app.activities
 
 import android.content.Intent
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
-import vcmsa.projects.fkj_consultants.R
+import student.projects.fkj_consultants_app.R
 
 class LoginActivity : AppCompatActivity() {
 
@@ -14,7 +16,9 @@ class LoginActivity : AppCompatActivity() {
     // Trusted admin emails (case-insensitive)
     private val adminEmails = listOf(
         "kush@gmail.com",
-        "keitumetse01@gmail.com"
+        "keitumetse01@gmail.com",
+        "malikaOlivia@gmail.com",
+        "JamesJameson@gmail.com"
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,7 +30,9 @@ class LoginActivity : AppCompatActivity() {
         val etUsername = findViewById<EditText>(R.id.etUsername)
         val etPassword = findViewById<EditText>(R.id.etPassword)
         val btnLogin = findViewById<Button>(R.id.btnLogin)
+        val tvForgotPassword = findViewById<TextView>(R.id.tvForgotPassword)
 
+        // Login button click
         btnLogin.setOnClickListener {
             val email = etUsername.text.toString().trim()
             val password = etPassword.text.toString().trim()
@@ -62,6 +68,12 @@ class LoginActivity : AppCompatActivity() {
                         ).show()
                     }
                 }
+        }
+
+        // Forgot Password click
+        tvForgotPassword.setOnClickListener {
+            // Navigate to ForgotPasswordActivity
+            startActivity(Intent(this, ForgotPasswordActivity::class.java))
         }
     }
 }
