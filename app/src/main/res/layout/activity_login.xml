@@ -1,18 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent" android:layout_height="match_parent" android:background="#113866" android:padding="24dp">
-    <LinearLayout android:id="@+id/loginCard" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="#6785a1" android:padding="24dp" android:layout_centerInParent="true">
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="LOGIN" android:textColor="#1B2C4A" android:textSize="24sp" android:textStyle="bold" android:layout_gravity="center_horizontal" android:layout_marginBottom="16dp"/>
-        <!--  Username Field  -->
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="12dp">
-            <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_user" android:layout_gravity="center_vertical"/>
-            <EditText android:id="@+id/etUsername" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginStart="8dp" android:background="#dcdcdc" android:hint="Email" android:inputType="textEmailAddress" android:padding="8dp" android:textColor="#000000" tools:ignore="TouchTargetSizeCheck"/>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/blue_gradient_bg"
+    android:padding="24dp">
+
+    <!-- Centered Login Card -->
+    <LinearLayout
+        android:id="@+id/loginCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/login_card_bg"
+        android:padding="24dp"
+        android:layout_centerInParent="true"
+        android:elevation="6dp"
+        android:clipToOutline="true">
+
+        <!-- App Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FKJ Consultants"
+            android:textColor="#113866"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Login to your account"
+            android:textColor="#44576D"
+            android:textSize="15sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Username Field -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_user"
+                android:layout_marginEnd="8dp" />
+
+            <EditText
+                android:id="@+id/etUsername"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:background="@drawable/rounded_input_bg"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="10dp"
+                android:textColor="#000000"
+                android:textColorHint="#888888"
+                tools:ignore="TouchTargetSizeCheck" />
         </LinearLayout>
-        <!--  Password Field  -->
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="15dp">
-            <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_password" android:layout_gravity="center_vertical"/>
-            <EditText android:id="@+id/etPassword" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginStart="8dp" android:background="#dcdcdc" android:hint="Password" android:inputType="textPassword" android:padding="8dp" android:textColor="#000000" tools:ignore="TouchTargetSizeCheck"/>
+
+        <!-- Password Field -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="20dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_password"
+                android:layout_marginEnd="8dp" />
+
+            <EditText
+                android:id="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:background="@drawable/rounded_input_bg"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="10dp"
+                android:textColor="#000000"
+                android:textColorHint="#888888"
+                tools:ignore="TouchTargetSizeCheck" />
         </LinearLayout>
-        <!--  Login Button  -->
-        <Button android:id="@+id/btnLogin" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Login" android:layout_gravity="center_horizontal" android:backgroundTint="#0f2c50" android:textColor="#ffffff" android:paddingHorizontal="32dp"/>
+
+        <!-- Login Button -->
+        <Button
+            android:id="@+id/btnLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="#020C47"
+            android:elevation="4dp"
+            android:paddingVertical="12dp"
+            android:text="Login"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
+
+        <!-- Forgot Password -->
+        <TextView
+            android:id="@+id/tvForgotPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Forgot Password?"
+            android:textColor="#113866"
+            android:textStyle="italic"
+            android:textSize="14sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp" />
     </LinearLayout>
 </RelativeLayout>
