@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="colorPrimary">#1976D2</color>
+    <color name="colorPrimaryDark">#1565C0</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <!-- Status Colors -->
+    <color name="statusPending">#FF9800</color>
+    <color name="statusApproved">#4CAF50</color>
+    <color name="statusRejected">#F44336</color>
+
+    <!-- Background Colors -->
+    <color name="backgroundColor">#FFFFFF</color>
+    <color name="backgroundLight">#F5F5F5</color>
+    <color name="backgroundDark">#212121</color>
+
+    <!-- Text Colors -->
+    <color name="textPrimary">#212121</color>
+    <color name="textSecondary">#757575</color>
+    <color name="textHint">#9E9E9E</color>
+    <color name="textWhite">#FFFFFF</color>
+
+    <!-- Card Colors -->
+    <color name="cardBackground">#FFFFFF</color>
+    <color name="cardShadow">#1F000000</color>
+
+    <!-- Button Colors -->
+    <color name="buttonPrimary">#2196F3</color>
+    <color name="buttonSecondary">#757575</color>
+    <color name="buttonDanger">#F44336</color>
+    <color name="buttonSuccess">#4CAF50</color>
+
+    <!-- Divider Colors -->
+    <color name="divider">#BDBDBD</color>
+
+    <!-- Transparent -->
+    <color name="transparent">#00000000</color>
+
+    <!-- Chat bubbles -->
+    <color name="chat_sent_bg">#6200EE</color>
+    <color name="chat_received_bg">#03DAC5</color>
+    <color name="chat_text_light">#FFFFFFFF</color>
+    <color name="chat_text_dark">#FF000000</color>
+
+    <color name="light_gray">#FFE0E0E0</color>
+    <color name="blue_500">#FF2196F3</color>
+    <color name="green_500">#FF4CAF50</color>
+
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="status_online">#4CAF50</color>
+    <color name="status_offline">#FF9800</color>
+
+    <!-- Message bubble colors -->
+    <color name="message_sent_bg">#DCF8C6</color>
+    <color name="message_received_bg">#FFFFFF</color>
+    <!--  Primary Yellow Theme  -->
+    <color name="primaryColor">#FFCC00</color>
+    <!--  Bright Yellow  -->
+    <color name="primaryDarkColor">#FBC02D</color>
+    <!--  Slightly darker yellow for toolbar/status  -->
+    <color name="accentColor">#FFC107</color>
+    <!--  Material Amber accent  -->
+
+    <color name="grayLight">#F5F5F5</color>
+    <color name="grayDark">#212121</color>
+
+
+    </resources>

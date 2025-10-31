@@ -1,0 +1,340 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/blue_gradient_bg"
+    android:padding="24dp">
+
+    <!-- ===== SETTINGS HEADER ===== -->
+    <TextView
+        android:id="@+id/tvSettingsHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Settings"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:shadowColor="#66000000"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="3"
+        android:elevation="8dp" />
+
+    <!-- Scrollable content -->
+    <ScrollView
+        android:layout_below="@id/tvSettingsHeader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="24dp"
+        android:layout_centerHorizontal="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- =============== PROFILE CARD =============== -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/login_card_bg"
+                android:padding="24dp"
+                android:elevation="6dp"
+                android:clipToOutline="true"
+                android:layout_marginBottom="24dp">
+
+                <!-- Profile Picture -->
+                <FrameLayout
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="20dp">
+
+                    <ImageView
+                        android:id="@+id/ivProfilePicture"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_profile"
+                        android:background="@drawable/circle_bg"
+                        android:clipToOutline="true"
+                        android:elevation="4dp" />
+
+                    <ImageView
+                        android:id="@+id/ivEditProfilePicture"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_gravity="bottom|end"
+                        android:src="@drawable/ic_edit"
+                        android:background="@drawable/circle_bg_accent"
+                        android:padding="6dp"
+                        android:elevation="6dp" />
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Profile Settings"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="#113866"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="12dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Manage your account details"
+                    android:textSize="15sp"
+                    android:textColor="#44576D"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="24dp" />
+
+                <!-- =============== Profile Fields =============== -->
+                <EditText
+                    android:id="@+id/etFirstName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="First Name"
+                    android:inputType="textPersonName"
+                    android:background="@drawable/rounded_input_bg"
+                    android:padding="12dp"
+                    android:textColor="#000"
+                    android:textColorHint="#888"
+                    android:layout_marginBottom="12dp" />
+
+                <EditText
+                    android:id="@+id/etLastName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Last Name"
+                    android:inputType="textPersonName"
+                    android:background="@drawable/rounded_input_bg"
+                    android:padding="12dp"
+                    android:textColor="#000"
+                    android:textColorHint="#888"
+                    android:layout_marginBottom="12dp" />
+
+                <EditText
+                    android:id="@+id/etUserName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Username"
+                    android:inputType="text"
+                    android:background="@drawable/rounded_input_bg"
+                    android:padding="12dp"
+                    android:textColor="#000"
+                    android:textColorHint="#888"
+                    android:layout_marginBottom="12dp" />
+
+                <EditText
+                    android:id="@+id/etEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Email"
+                    android:inputType="textEmailAddress"
+                    android:background="@drawable/rounded_input_bg"
+                    android:padding="12dp"
+                    android:textColor="#000"
+                    android:textColorHint="#888"
+                    android:layout_marginBottom="12dp" />
+
+                <EditText
+                    android:id="@+id/etAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Address"
+                    android:inputType="textPostalAddress"
+                    android:background="@drawable/rounded_input_bg"
+                    android:padding="12dp"
+                    android:textColor="#000"
+                    android:textColorHint="#888"
+                    android:layout_marginBottom="12dp" />
+
+                <EditText
+                    android:id="@+id/etPhoneNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Phone Number"
+                    android:inputType="phone"
+                    android:background="@drawable/rounded_input_bg"
+                    android:padding="12dp"
+                    android:textColor="#000"
+                    android:textColorHint="#888"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Buttons -->
+                <Button
+                    android:id="@+id/btnUpdateProfile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Update Profile"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="#020C47"
+                    android:elevation="4dp"
+                    android:paddingVertical="12dp"
+                    android:layout_marginBottom="12dp" />
+
+                <Button
+                    android:id="@+id/btnResetPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Reset Password"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="#113866"
+                    android:elevation="4dp"
+                    android:paddingVertical="12dp" />
+
+            </LinearLayout>
+
+            <!-- =============== ADDITIONAL SETTINGS CARD =============== -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/login_card_bg"
+                android:padding="24dp"
+                android:elevation="6dp"
+                android:clipToOutline="true">
+
+                <!-- Notifications -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_notifications"
+                        android:layout_marginEnd="12dp" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Notifications"
+                        android:textSize="16sp"
+                        android:textColor="#000000" />
+
+                    <Switch
+                        android:id="@+id/switchNotifications"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <!-- Chat Options -->
+                <LinearLayout
+                    android:id="@+id/btnChatOptions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_chat"
+                        android:layout_marginEnd="12dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Chat Options"
+                        android:textSize="16sp"
+                        android:textColor="#000000" />
+                </LinearLayout>
+
+                <!-- Invite Friends -->
+                <LinearLayout
+                    android:id="@+id/btnInviteFriends"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_share"
+                        android:layout_marginEnd="12dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Invite Friends"
+                        android:textSize="16sp"
+                        android:textColor="#000000" />
+                </LinearLayout>
+
+                <!-- Help & Feedback -->
+                <LinearLayout
+                    android:id="@+id/btnHelpFeedback"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_help"
+                        android:layout_marginEnd="12dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Help and Feedback"
+                        android:textSize="16sp"
+                        android:textColor="#000000" />
+                </LinearLayout>
+
+                <!-- Logout -->
+                <LinearLayout
+                    android:id="@+id/btnLogout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_logout"
+                        android:layout_marginEnd="12dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Logout"
+                        android:textSize="16sp"
+                        android:textColor="#E53935" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

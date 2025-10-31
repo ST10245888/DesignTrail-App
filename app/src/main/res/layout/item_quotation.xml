@@ -1,0 +1,133 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:layout_margin="8dp"
+    android:background="@drawable/conversation_item_background"
+    android:elevation="4dp"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- Header Row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="12dp"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtCompany"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Company Name"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#2C3E50"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/txtFileName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="quotation_file.txt"
+                android:textSize="12sp"
+                android:textColor="#555555" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="end">
+
+            <!-- Status with highlight -->
+            <TextView
+                android:id="@+id/txtStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pending"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/holo_orange_dark"
+                android:background="@drawable/status_background"
+                android:padding="4dp"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/txtTimestamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Jan 01, 2024 10:00"
+                android:textSize="11sp"
+                android:textColor="#999999" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Details Row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="12dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total:"
+                android:textSize="11sp"
+                android:textColor="#666666"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/txtSubtotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="R0.00"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/teal_700" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#CCCCCC"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
+
+        <Button
+            android:id="@+id/btnDetails"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:text="Details"
+            android:textSize="11sp"
+            android:backgroundTint="#020C47"
+            android:textColor="@color/white"
+            android:layout_marginStart="4dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
+    </LinearLayout>
+</LinearLayout>

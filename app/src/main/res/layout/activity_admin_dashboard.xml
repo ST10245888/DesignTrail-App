@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/adminDashboardLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff">
+
+    <!-- Header Section -->
+    <LinearLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:background="#ffffff"
+        android:gravity="center_horizontal">
+
+        <!-- Header Top Row with Logo and Notification Bell -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp">
+
+            <!-- FKJ Logo and Branding (Left) -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/ic_fkj_logo"
+                    android:contentDescription="FKJ Logo"
+                    android:layout_marginEnd="12dp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="FKJ"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#00BCD4" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="CONSULTANTS"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#00BCD4" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="FKJ Consultants Pty Ltd"
+                        android:textSize="10sp"
+                        android:textColor="#00BCD4" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Notification Bell (Right) -->
+            <FrameLayout
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/adminNotificationBell"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_notification_bell"
+                    android:contentDescription="Notifications"
+                    android:scaleType="centerInside"
+                    android:layout_gravity="center"
+                    app:tint="#00BCD4" />
+
+                <!-- Notification Badge -->
+                <TextView
+                    android:id="@+id/adminNotificationBadge"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:gravity="center"
+                    android:text="1"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/notification_badge_bg"
+                    android:layout_gravity="top|end"
+                    android:visibility="gone" />
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <!-- ADMIN DASHBOARD Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ADMIN DASHBOARD"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#1B2C4A" />
+
+    </LinearLayout>
+
+    <!-- Connection Status Banner -->
+    <TextView
+        android:id="@+id/connectionStatusBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/headerLayout"
+        android:text="Checking connection..."
+        android:gravity="center"
+        android:padding="8dp"
+        android:textColor="@android:color/white"
+        android:background="@color/status_offline"
+        android:visibility="gone" />
+
+    <!-- Scroll Content -->
+    <ScrollView
+        android:id="@+id/mainContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/adminBottomNav"
+        android:layout_below="@id/connectionStatusBanner"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:spacing="20dp">
+
+            <!-- User Quotations Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="280dp"
+                android:layout_height="140dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="#B2DAE6"
+                android:foreground="?android:attr/selectableItemBackground">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="20dp">
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/ic_quotation"
+                        android:contentDescription="User Quotations Icon"
+                        android:layout_marginBottom="8dp" />
+
+                    <Button
+                        android:id="@+id/btnUserQuotations"
+                        android:layout_width="wrap_content"
+                        android:layout_height="65dp"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:minHeight="48dp"
+                        android:text="User Quotations"
+                        android:textColor="#1B2C4A"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Inventory Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="280dp"
+                android:layout_height="140dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="#B2DAE6"
+                android:foreground="?android:attr/selectableItemBackground">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="20dp">
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/ic_inventory"
+                        android:contentDescription="Inventory Icon"
+                        android:layout_marginBottom="8dp" />
+
+                    <Button
+                        android:id="@+id/btnInventory"
+                        android:layout_width="145dp"
+                        android:layout_height="76dp"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:minHeight="48dp"
+                        android:text="Inventory"
+                        android:textColor="#1B2C4A"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        tools:ignore="TouchTargetSizeCheck" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Messaging Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="280dp"
+                android:layout_height="140dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="#B2DAE6"
+                android:foreground="?android:attr/selectableItemBackground">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="20dp">
+
+                    <Button
+                        android:id="@+id/btnMessaging"
+                        android:layout_width="148dp"
+                        android:layout_height="73dp"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:minHeight="48dp"
+                        android:text="Messaging"
+                        android:textColor="#1B2C4A"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/ic_messaging"
+                        android:contentDescription="Messaging Icon"
+                        android:layout_marginBottom="8dp" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/adminBottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:background="#30B4D1"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/admin_nav_menu" />
+
+</RelativeLayout>
