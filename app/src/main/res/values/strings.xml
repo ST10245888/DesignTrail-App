@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">FKJ Application</string>
+    <string name="about_us_text"><![CDATA[
+Our Service Offering
+
+At FKJ Consultants, we specialize in comprehensive event management, providing end-to-end solutions tailored to your unique needs.
+Our expertise includes project management, brand activation, and production services, ensuring seamless execution from concept to completion.
+Whether you’re planning a corporate event, launching a new product, or organizing a community gathering, we are dedicated to delivering exceptional experiences
+that leave a lasting impression.
+
+Our Capabilities
+
+We employ proven systems, specialized skills, and streamlined processes to deliver fully integrated,
+cost-effective solutions designed to meet your brand communication goals. Our approach ensures maximum efficiency, optimal resource use,
+and consistently measurable results aligned with your strategic objectives.
+    ]]></string>
+
+
+    <string name="send">Send</string>
+
+        <string name="generate_pdf">Generate PDF</string>
+        <string name="quotation_history">Quotation History</string>
+        <string name="open">Open</string>
+        <string name="share">Share</string>
+    <string name="color_preview">Color preview</string>
+
+
+
+</resources>

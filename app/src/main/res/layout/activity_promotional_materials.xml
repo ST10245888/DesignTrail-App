@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/white"
+    tools:context=".activities.PromotionalMaterialsActivity">
+
+    <!-- 🔍 Search Bar -->
+    <SearchView
+        android:id="@+id/searchView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:queryHint="Search items..."
+        android:iconifiedByDefault="false"
+        android:layout_marginBottom="8dp" />
+
+    <!-- 📦 Inventory List -->
+    <ListView
+        android:id="@+id/listViewServices"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp"
+        android:background="@color/white" />
+
+    <!-- 🛒 Add to Cart Button -->
+    <Button
+        android:id="@+id/btnAddToCart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Generate Quotation"
+        android:textAllCaps="false"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/purple_700"
+        android:textColor="@color/white" />
+
+</LinearLayout>

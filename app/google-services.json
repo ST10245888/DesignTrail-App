@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "221798229940",
+    "firebase_url": "https://fkjconsultants-2ccae-default-rtdb.firebaseio.com",
+    "project_id": "fkjconsultants-2ccae",
+    "storage_bucket": "fkjconsultants-2ccae.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:221798229940:android:23d9d4b8cb93654580b4e1",
+        "android_client_info": {
+          "package_name": "student.projects.fkj_consultants_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChqQqJbKnf8yvslcV3FhXxJZagCJagzs0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:221798229940:android:66d1c9a27e57652680b4e1",
+        "android_client_info": {
+          "package_name": "vcmsa.projects.fkj_consultants"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChqQqJbKnf8yvslcV3FhXxJZagCJagzs0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

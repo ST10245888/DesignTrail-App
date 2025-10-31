@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainScrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <!-- Logo and Title Container -->
+        <FrameLayout
+            android:layout_width="200dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="32dp">
+
+            <!-- Logo Image -->
+            <ImageView
+                android:id="@+id/imgLogo"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:contentDescription="FKJ Consultants Logo"
+                android:scaleType="fitCenter"
+                android:layout_gravity="start|center_vertical" />
+
+            <!-- Welcome Text -->
+            <TextView
+                android:id="@+id/tvWelcome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="WELCOME TO FKJ\nCONSULTANTS"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#0D5B7F"
+                android:layout_gravity="end|center_vertical"
+                android:lineSpacingExtra="2dp"
+                android:gravity="center" />
+
+        </FrameLayout>
+
+        <!-- Our Service Offering Header -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Our Service Offering"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:textColor="#0D5B7F"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Service Offering Description -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="At FKJ Consultants, we specialize in comprehensive event management, offering end-to-end solutions tailored to meet your unique needs. Our expertise spans project production services, ensuring seamless execution from concept to completion. Whether you're planning a corporate event, launching a new product, or organizing a community initiative, we deliver innovative strategies and exceptional experiences that leave a lasting impression."
+            android:textSize="12sp"
+            android:textColor="#666666"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="left"
+            android:justificationMode="inter_word" />
+
+        <!-- Our Capabilities Header -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Our Capabilities"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:textColor="#0D5B7F"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Capabilities Description -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="We leverage proven systems, specialized skills, and streamlined processes to deliver top-tier event management solutions tailored to your brand communication needs. Our strategic approach maximizing efficiency, optimizing resources, and consistently delivering exceptional results that align with your strategic objectives."
+            android:textSize="12sp"
+            android:textColor="#666666"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="48dp"
+            android:gravity="left"
+            android:justificationMode="inter_word" />
+
+        <!-- Buttons Container -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:spacing="16dp">
+
+            <!-- Login Button -->
+            <Button
+                android:id="@+id/btnLogin"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:backgroundTint="#113866"
+                android:text="LOGIN"
+                android:textColor="#ffffff"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:ignore="TouchTargetSizeCheck" />
+
+            <!-- Sign Up Button -->
+            <Button
+                android:id="@+id/btnRegister"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:backgroundTint="#5B8BC1"
+                android:text="SIGN UP"
+                android:textColor="#ffffff"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:ignore="TouchTargetSizeCheck" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="40dp" />
+
+    </LinearLayout>
+
+</ScrollView>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Permissions -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- Optional legacy storage for older devices -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage"/>
+
+    <application
+        android:name=".MyApplication"
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.FKJ_Consultants"
+        android:usesCleartextTraffic="false"
+        tools:targetApi="34">
+
+        <!-- FileProvider for secure file sharing -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+
+        <!-- Launcher activity -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <!-- Other activities -->
+        <activity android:name=".activities.LoginActivity" android:exported="false"/>
+        <activity android:name=".activities.RegisterActivity" android:exported="false"/>
+        <activity android:name=".activities.UserDashboardActivity" android:exported="false"/>
+        <activity android:name=".activities.AdminDashboardActivity" android:exported="false"/>
+        <activity android:name=".activities.ChatActivity" android:exported="false"/>
+        <activity android:name=".activities.AdminChatDashboardActivity" android:exported="false"/>
+        <activity android:name=".activities.AdminChatViewActivity" android:exported="false"/>
+        <activity android:name=".activities.ProfileActivity" android:exported="false"/>
+        <activity android:name=".activities.CatalogActivity" android:exported="false"/>
+        <activity android:name=".activities.QuotationActivity" android:exported="false"/>
+        <activity android:name=".activities.QuotationViewerActivity" android:exported="false"/>
+        <activity android:name=".activities.UserQuotationViewActivity" android:exported="false"/>
+        <activity android:name=".activities.AddProductActivity" android:exported="false"/>
+        <activity android:name=".activities.AdminQuotationListActivity" android:exported="false"/>
+        <activity android:name=".activities.AdminQuotationViewActivity" android:exported="false"/>
+        <activity android:name=".activities.EditProductActivity" android:exported="false"/>
+        <activity android:name=".activities.OrdersActivity" android:exported="false"/>
+        <activity android:name=".activities.PromotionalMaterialsActivity" android:exported="false"/>
+        <activity android:name=".activities.BrandingActivity" android:exported="false"/>
+        <activity android:name=".activities.InventoryActivity" android:exported="false"/>
+        <activity android:name=".activities.QuoteRequestActivity" android:exported="false"/>
+        <activity android:name=".activities.ForgotPasswordActivity" android:exported="false"/>
+
+        <!-- Firebase App Check -->
+        <meta-data
+            android:name="firebase_app_check_service"
+            android:value="playintegrity"/>
+
+    </application>
+
+</manifest>

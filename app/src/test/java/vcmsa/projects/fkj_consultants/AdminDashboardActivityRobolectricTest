@@ -1,0 +1,82 @@
+package vcmsa.projects.fkj_consultants.activities
+
+import android.widget.Button
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import org.junit.Assert.assertEquals
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.Robolectric
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.shadows.ShadowToast
+import vcmsa.projects.fkj_consultants.R
+
+@RunWith(RobolectricTestRunner::class)
+class AdminDashboardActivityRobolectricTest {
+
+    private lateinit var activity: AdminDashboardActivity
+
+    @Before
+    fun setup() {
+        val controller = Robolectric.buildActivity(AdminDashboardActivity::class.java)
+        activity = controller.setup().get()
+    }
+
+    // --- Button Tests ---
+    @Test
+    fun clickUserQuotations_showsToast() {
+        val button = activity.findViewById<Button>(R.id.btnUserQuotations)
+        button.performClick()
+        assertEquals("User Quotations: Coming soon", ShadowToast.getTextOfLatestToast())
+    }
+
+    @Test
+    fun clickInventory_showsToast() {
+        val button = activity.findViewById<Button>(R.id.btnInventory)
+        button.performClick()
+        assertEquals("Inventory: Coming soon", ShadowToast.getTextOfLatestToast())
+    }
+
+    @Test
+    fun clickMessaging_showsToast() {
+        val button = activity.findViewById<Button>(R.id.btnMessaging)
+        button.performClick()
+        assertEquals("Messaging: Coming soon", ShadowToast.getTextOfLatestToast())
+    }
+
+    // --- Bottom Navigation Tests ---
+    @Test
+    fun selectNavHome_showsToast() {
+        val bottomNav = activity.findViewById<BottomNavigationView>(R.id.bottomNavigation)
+        bottomNav.selectedItemId = R.id.nav_home
+        assertEquals("Home Selected", ShadowToast.getTextOfLatestToast())
+    }
+
+    @Test
+    fun selectNavCatalog_showsToast() {
+        val bottomNav = activity.findViewById<BottomNavigationView>(R.id.bottomNavigation)
+        bottomNav.selectedItemId = R.id.nav_catalog
+        assertEquals("Catalog Selected", ShadowToast.getTextOfLatestToast())
+    }
+
+    @Test
+    fun selectNavDashboard_showsToast() {
+        val bottomNav = activity.findViewById<BottomNavigationView>(R.id.bottomNavigation)
+        bottomNav.selectedItemId = R.id.nav_dashboard
+        assertEquals("Dashboard Selected", ShadowToast.getTextOfLatestToast())
+    }
+
+    @Test
+    fun selectNavMessages_showsToast() {
+        val bottomNav = activity.findViewById<BottomNavigationView>(R.id.bottomNavigation)
+        bottomNav.selectedItemId = R.id.nav_messages
+        assertEquals("Messaging Selected", ShadowToast.getTextOfLatestToast())
+    }
+
+    @Test
+    fun selectNavProfile_showsToast() {
+        val bottomNav = activity.findViewById<BottomNavigationView>(R.id.bottomNavigation)
+        bottomNav.selectedItemId = R.id.nav_profile
+        assertEquals("Profile Selected", ShadowToast.getTextOfLatestToast())
+    }
+}
