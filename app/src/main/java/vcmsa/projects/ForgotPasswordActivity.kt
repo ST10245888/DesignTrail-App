@@ -95,10 +95,10 @@ class ForgotPasswordActivity : AppCompatActivity() {
 /*
 Reference List
 
-Android Developers, 2024. Firebase Authentication: Send Password Reset Emails. [online] Available at: https://firebase.google.com/docs/auth/android/manage-users#send_a_password_reset_email [Accessed 4 November 2025].
+Android Developers, 2024. Firebase Authentication: Send Password Reset Emails. [online] Available at: https://firebase.google.com/docs/auth/android/manage-users#send_a_password_reset_email [Accessed 12 October 2025].
 
-GeeksforGeeks, 2024. Implementing Forgot Password Feature in Android using Firebase. [online] Available at: https://www.geeksforgeeks.org/implement-forgot-password-feature-in-android-using-firebase/ [Accessed 4 November 2025].
+GeeksforGeeks, 2024. Implementing Forgot Password Feature in Android using Firebase. [online] Available at: https://www.geeksforgeeks.org/implement-forgot-password-feature-in-android-using-firebase/ [Accessed 12 October 2025].
 
-Kotlinlang.org, 2024. Android App Development with Kotlin. [online] Available at: https://kotlinlang.org/docs/android-overview.html [Accessed 4 November 2025].
+Kotlinlang.org, 2024. Android App Development with Kotlin. [online] Available at: https://kotlinlang.org/docs/android-overview.html [Accessed 12 October 2025].
 
  */
