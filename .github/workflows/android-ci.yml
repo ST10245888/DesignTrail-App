@@ -2,10 +2,11 @@ name: Android CI
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - fkjconsultants
   pull_request:
-    branches: [ main ]
-
+    branches:
+      - fkjconsultants
 env:
   GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx1536m
 
