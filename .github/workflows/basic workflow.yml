@@ -2,11 +2,10 @@ name: SonarCloud and Android CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [ fkjconsultants ]
   pull_request:
-    branches:
-      - main
+    branches: [ fkjconsultants ]
+
 
 jobs:
   build:
