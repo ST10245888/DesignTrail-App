@@ -227,3 +227,4 @@ class ChatMessageTest {
         assertTrue(message.message.contains("✓"))
     }
 }
+// (Gideon, 2023).

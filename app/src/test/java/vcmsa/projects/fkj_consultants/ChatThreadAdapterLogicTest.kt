@@ -9,7 +9,7 @@ import vcmsa.projects.fkj_consultants.models.ChatMessage
  *
  * Tests the adapter's message management and view type logic
  */
-class ChatAdapterLogicTest {
+class ChatThreadAdapterLogicTest {
 
     @Test
     fun `test message list initialization`() {
@@ -360,8 +360,7 @@ class ChatAdapterLogicTest {
     }
 }
 
-// If the extension functions are not available in the models package,
-// you can add them here as a temporary solution:
+//(Gideon, 2023).
 /*
 // Extension functions for List<ChatMessage>
 fun List<ChatMessage>.getUnreadCount(): Int {
