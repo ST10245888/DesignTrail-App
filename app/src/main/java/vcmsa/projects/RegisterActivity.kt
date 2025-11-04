@@ -61,7 +61,7 @@ class RegisterActivity : AppCompatActivity() {
         etPassword = findViewById(id.etPassword)
         etConfirmPassword = findViewById(id.etConfirmPassword)
         btnRegister = findViewById(id.btnRegister)
-        tvLogin = findViewById(id.tvLoginRedirect) // Initialize TextView for redirect to login screen
+        tvLogin = findViewById(id.tvLogin) // Fixed: Changed from tvLoginRedirect to tvLogin
     }
 
     // Ensures the phone number always starts with "+27" and has a max length of 12 (GeeksforGeeks, 2024)
@@ -240,15 +240,3 @@ class RegisterActivity : AppCompatActivity() {
             }
     }
 }
-
-/*
-Reference List
-
-Android Developers, 2024. Firebase Authentication Overview. [online] Available at: https://firebase.google.com/docs/auth/android/start [Accessed 14 August 2025].
-
-Google, 2024. Firebase Error Handling and Exceptions. [online] Available at: https://firebase.google.com/docs/reference/android/com/google/firebase/FirebaseException [Accessed 15 August 2025].
-
-Kotlinlang.org, 2024. Kotlin Android Development Best Practices. [online] Available at: https://kotlinlang.org/docs/android-overview.html [Accessed 14 August 2025].
-
-GeeksforGeeks, 2024. Implementing Login and Registration using Firebase in Android. [online] Available at: https://www.geeksforgeeks.org/login-and-registration-using-firebase-in-android/ [Accessed 15 August 2025].
- */
