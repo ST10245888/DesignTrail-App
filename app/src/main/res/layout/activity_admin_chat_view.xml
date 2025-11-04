@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <!-- Header -->
+    <!-- Header with Back Button -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,15 +18,28 @@
         android:paddingVertical="12dp"
         android:elevation="4dp">
 
+        <!-- Back Arrow Button -->
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_arrow_back"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/back_button"
+            android:padding="12dp"
+            android:scaleType="centerInside"
+            app:tint="@color/white" />
+
         <TextView
             android:id="@+id/tvChatHeader"
             android:text="Chat with User"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="@color/black"
-            android:layout_width="wrap_content"
+            android:textColor="@color/white"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"/>
     </LinearLayout>
 
     <!-- Messages RecyclerView -->
@@ -75,15 +88,16 @@
             android:paddingHorizontal="16dp"
             android:paddingVertical="8dp"
             android:backgroundTint="@color/teal_700"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textStyle="bold"
             android:elevation="2dp"/>
     </LinearLayout>
+
+    <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/adminBottomNav"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content"
         android:background="#30B4D1"
         app:itemIconTint="@color/white"
         app:itemTextColor="@color/white"

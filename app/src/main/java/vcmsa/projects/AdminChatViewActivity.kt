@@ -6,7 +6,9 @@ import android.text.TextUtils
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,10 +24,12 @@ class AdminChatViewActivity : AppCompatActivity() {
     private lateinit var recyclerChat: RecyclerView
     private lateinit var etMessage: EditText
     private lateinit var btnSend: Button
+    private lateinit var btnBack: ImageButton
     private lateinit var tvHeader: TextView
     private lateinit var adapter: ChatAdapter
     private lateinit var chatRef: DatabaseReference
     private lateinit var chatRoot: DatabaseReference
+    private lateinit var bottomNav: BottomNavigationView
 
     private val auth = FirebaseAuth.getInstance()
     private val adminEmails = listOf(
@@ -35,127 +39,232 @@ class AdminChatViewActivity : AppCompatActivity() {
         "JamesJameson@gmail.com"
     )
 
-    private lateinit var chatId: String
-    private lateinit var userEmail: String
-    private lateinit var adminEmail: String
-    private lateinit var bottomNav: BottomNavigationView
+    private var chatId = ""
+    private var userEmail = ""
+    private var userId = ""
+    private var adminEmail = ""
+    private var quotationId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin_chat_view)
+        Log.d("AdminChatView", "onCreate: Activity started")
 
-        recyclerChat = findViewById(R.id.recyclerAdminChat)
-        etMessage = findViewById(R.id.etAdminMessage)
-        btnSend = findViewById(R.id.btnAdminSend)
-        tvHeader = findViewById(R.id.tvChatHeader)
-
-        bottomNav = findViewById(R.id.adminBottomNav)
+        initializeViews()
+        getIntentExtras()
         setupBottomNav()
-        adminEmail = auth.currentUser?.email ?: run { finish(); return }
-        userEmail = intent.getStringExtra("userEmail") ?: run { finish(); return }
+
+        adminEmail = auth.currentUser?.email ?: run {
+            Log.e("AdminChatView", "No authenticated admin user")
+            Toast.makeText(this, "Authentication required", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
+
+        setupChat()
+        setupRecyclerView()
+        setupClickListeners()
+        handleIntentAttachments()
+
+        Log.d("AdminChatView", "Chat opened for user: $userEmail (chatId=$chatId, userId=$userId)")
+    }
+
+    private fun initializeViews() {
+        try {
+            recyclerChat = findViewById(R.id.recyclerAdminChat)
+            etMessage = findViewById(R.id.etAdminMessage)
+            btnSend = findViewById(R.id.btnAdminSend)
+            btnBack = findViewById(R.id.btnBack)
+            tvHeader = findViewById(R.id.tvChatHeader)
+            bottomNav = findViewById(R.id.adminBottomNav)
+
+            Log.d("AdminChatView", "initializeViews: All views initialized successfully")
+            Log.d("AdminChatView", "btnBack is initialized: ${::btnBack.isInitialized}")
+        } catch (e: Exception) {
+            Log.e("AdminChatView", "Error initializing views: ${e.message}")
+            Toast.makeText(this, "Error initializing UI", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun getIntentExtras() {
+        chatId = intent.getStringExtra("chatId") ?: ""
+        userEmail = intent.getStringExtra("userEmail") ?: ""
+        userId = intent.getStringExtra("userId") ?: ""
+        quotationId = intent.getStringExtra("quotationId") ?: ""
+
+        // If no chatId provided, generate one from userEmail
+        if (chatId.isEmpty() && userEmail.isNotEmpty()) {
+            chatId = encodeEmail(userEmail)
+        }
+
+        Log.d("AdminChatView", "getIntentExtras: chatId=$chatId, userEmail=$userEmail")
+    }
+
+    private fun setupChat() {
+        if (chatId.isEmpty()) {
+            Log.e("AdminChatView", "No chatId or userEmail provided")
+            Toast.makeText(this, "Chat information missing", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
 
         tvHeader.text = "Chat with $userEmail"
 
-        // One chat per user for all admins
-        chatId = encodeEmail(userEmail)
         chatRoot = FirebaseDatabase.getInstance().getReference("chats").child(chatId)
         chatRef = chatRoot.child("messages")
 
-        // Initialize metadata (ensures admin dashboard sees the user)
         initializeMetadata()
-
-        adapter = ChatAdapter(mutableListOf(), adminEmail)
-        recyclerChat.layoutManager = LinearLayoutManager(this)
-        recyclerChat.adapter = adapter
-
         listenForMessages()
 
-        // Reset unread count for this admin only
+        // Reset unread count for current admin only
         chatRoot.child("metadata").child("unreadCounts")
             .child(encodeEmail(adminEmail)).setValue(0)
 
-        btnSend.setOnClickListener { sendMessage() }
-
-        // Handle optional quotation text attachment
-        intent.getStringExtra("quotationText")?.let { textContent ->
-            sendTextAttachmentMessage(textContent, "Quotation")
-        }
-
-        // Handle optional PDF or file attachment
-        intent.getStringExtra("quotationPdfUri")?.let { pdfUri ->
-            sendAttachmentMessage(Uri.parse(pdfUri), "PDF Quotation")
-        }
-
-        Log.d("AdminChatView", "Chat opened for $userEmail (chatId=$chatId)")
+        Log.d("AdminChatView", "setupChat: Chat setup completed")
     }
 
-    /** Generic navigation helper */
-    private fun navigateTo(activityClass: Class<*>) {
-        val intent = android.content.Intent(this, activityClass)
-        startActivity(intent)
+    private fun setupRecyclerView() {
+        adapter = ChatAdapter(mutableListOf(), auth.currentUser?.uid ?: "")
+        recyclerChat.layoutManager = LinearLayoutManager(this)
+        recyclerChat.adapter = adapter
     }
 
-    /** Open admin messaging dashboard (replace with your actual dashboard activity) */
-    private fun openMessagingDashboard() {
-        // Replace AdminDashboardActivity with your actual messaging dashboard activity
-        val intent = android.content.Intent(this, AdminDashboardActivity::class.java)
-        startActivity(intent)
+    private fun setupClickListeners() {
+        Log.d("AdminChatView", "setupClickListeners: Setting up click listeners")
+
+        // Send button
+        btnSend.setOnClickListener {
+            Log.d("AdminChatView", "Send button clicked")
+            sendMessage()
+        }
+
+        // Back button - multiple ways to handle it
+        btnBack.setOnClickListener {
+            Log.d("AdminChatView", "Back button clicked")
+            onBackButtonClicked()
+        }
+
+        Log.d("AdminChatView", "setupClickListeners: Click listeners set up")
+    }
+
+    private fun onBackButtonClicked() {
+        Log.d("AdminChatView", "onBackButtonClicked: Finishing activity")
+        Toast.makeText(this, "Returning to dashboard", Toast.LENGTH_SHORT).show()
+        finish()
     }
 
     private fun setupBottomNav() {
         bottomNav.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.nav_quotations -> { navigateTo(AdminQuotationListActivity::class.java); true }
-                R.id.nav_inventory -> { navigateTo(InventoryActivity::class.java); true }
-                R.id.nav_messages -> { openMessagingDashboard(); true }
+                R.id.nav_quotations -> {
+                    navigateTo(AdminQuotationListActivity::class.java)
+                    true
+                }
+                R.id.nav_inventory -> {
+                    navigateTo(InventoryActivity::class.java)
+                    true
+                }
+                R.id.nav_messages -> {
+                    openMessagingDashboard()
+                    true
+                }
                 else -> false
             }
         }
     }
-    private fun encodeEmail(email: String) = email.replace(".", ",")
 
-    /** Initialize metadata to ensure dashboard shows this chat */
+    private fun handleIntentAttachments() {
+        // Handle text quotation
+        intent.getStringExtra("quotationText")?.let { textContent ->
+            Log.d("AdminChatView", "Handling text quotation attachment")
+            sendTextAttachmentMessage(textContent, "Quotation")
+        }
+
+        // Handle PDF quotation
+        intent.getStringExtra("quotationPdfUri")?.let { pdfUri ->
+            Log.d("AdminChatView", "Handling PDF quotation attachment")
+            sendAttachmentMessage(Uri.parse(pdfUri), "PDF Quotation")
+        }
+    }
+
+    private fun navigateTo(activityClass: Class<*>) {
+        val intent = android.content.Intent(this, activityClass)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun openMessagingDashboard() {
+        val intent = android.content.Intent(this, AdminDashboardActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun encodeEmail(email: String): String {
+        return email.replace(".", ",")
+    }
+
     private fun initializeMetadata() {
         val metadataRef = chatRoot.child("metadata")
-        metadataRef.child("chatId").setValue(chatId)
-        metadataRef.child("userEmail").setValue(userEmail)
-        metadataRef.child("adminEmails").setValue(adminEmails.map { encodeEmail(it) })
-        metadataRef.child("lastMessage").setValue("")
-        metadataRef.child("lastTimestamp").setValue(System.currentTimeMillis())
-        metadataRef.child("lastSenderId").setValue("")
+        val updates = mapOf(
+            "chatId" to chatId,
+            "userEmail" to userEmail,
+            "userId" to userId,
+            "adminEmail" to adminEmail,
+            "adminEmails" to adminEmails.map { encodeEmail(it) },
+            "lastMessage" to "",
+            "lastTimestamp" to System.currentTimeMillis(),
+            "lastSenderId" to ""
+        )
+        metadataRef.updateChildren(updates)
+
+        // Initialize unread counts for all admins
         val unreadMap = mutableMapOf<String, Int>()
-        adminEmails.forEach { admin -> unreadMap[encodeEmail(admin)] = 0 }
+        adminEmails.forEach { admin ->
+            unreadMap[encodeEmail(admin)] = 0
+        }
         metadataRef.child("unreadCounts").setValue(unreadMap)
+
+        Log.d("AdminChatView", "initializeMetadata: Metadata initialized")
     }
 
     private fun listenForMessages() {
-        chatRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val messages = snapshot.children.mapNotNull { it.getValue(ChatMessage::class.java) }
-                    .sortedBy { it.timestamp }
-                adapter.setMessages(messages)
-                if (adapter.itemCount > 0) {
+        chatRef.addChildEventListener(object : ChildEventListener {
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                snapshot.getValue(ChatMessage::class.java)?.let { message ->
+                    adapter.addMessage(message)
                     recyclerChat.scrollToPosition(adapter.itemCount - 1)
                 }
             }
 
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
+            override fun onChildRemoved(snapshot: DataSnapshot) {}
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+
             override fun onCancelled(error: DatabaseError) {
-                Log.e("AdminChatView", "listenForMessages cancelled: ${error.message}")
+                Log.e("AdminChatView", "Database listener cancelled: ${error.message}")
             }
         })
+
+        Log.d("AdminChatView", "listenForMessages: Message listener started")
     }
 
     private fun sendMessage() {
         val text = etMessage.text.toString().trim()
-        if (TextUtils.isEmpty(text)) return
+        if (TextUtils.isEmpty(text)) {
+            Log.d("AdminChatView", "sendMessage: Empty message, not sending")
+            return
+        }
 
-        val timestamp = System.currentTimeMillis()
+        val sender = auth.currentUser ?: return
+
         val message = ChatMessage(
-            senderId = adminEmail,
-            receiverId = userEmail,
+            senderId = sender.uid,
+            receiverId = userId,
             message = text,
-            timestamp = timestamp
+            timestamp = System.currentTimeMillis(),
+            quotationId = quotationId
         )
+
         pushMessage(message)
     }
 
@@ -167,37 +276,41 @@ class AdminChatViewActivity : AppCompatActivity() {
             }
             .addOnFailureListener { e ->
                 Log.e("AdminChatView", "❌ Message push failed: ${e.message}")
+                Toast.makeText(this@AdminChatViewActivity, "Failed to send message", Toast.LENGTH_SHORT).show()
             }
 
-        // Update metadata - read current counts first, then increment for other admins
+        updateMetadata(message)
+    }
+
+    private fun updateMetadata(message: ChatMessage) {
         val metadataRef = chatRoot.child("metadata")
+
         metadataRef.child("unreadCounts").get().addOnSuccessListener { snapshot ->
             val unreadMap = mutableMapOf<String, Any>()
+            val baseMetadata = mapOf(
+                "chatId" to chatId,
+                "userEmail" to userEmail,
+                "userId" to userId,
+                "adminEmail" to adminEmail,
+                "lastMessage" to message.message,
+                "lastTimestamp" to message.timestamp,
+                "lastSenderId" to message.senderId
+            )
 
             adminEmails.forEach { email ->
                 val encodedEmail = encodeEmail(email)
                 if (email != adminEmail) {
-                    // Increment unread count for other admins
                     val currentCount = snapshot.child(encodedEmail).getValue(Int::class.java) ?: 0
                     unreadMap[encodedEmail] = currentCount + 1
                     Log.d("AdminChatView", "📊 Incrementing unread for $email: $currentCount -> ${currentCount + 1}")
                 } else {
-                    // Keep current admin's count at 0
                     unreadMap[encodedEmail] = 0
                 }
             }
 
-            val metadata = mapOf(
-                "chatId" to chatId,
-                "userEmail" to userEmail,
-                "adminEmails" to adminEmails.map { encodeEmail(it) },
-                "lastMessage" to message.message,
-                "lastTimestamp" to message.timestamp,
-                "lastSenderId" to message.senderId,
-                "unreadCounts" to unreadMap
-            )
+            val allUpdates = baseMetadata + mapOf("unreadCounts" to unreadMap)
 
-            metadataRef.updateChildren(metadata)
+            metadataRef.updateChildren(allUpdates)
                 .addOnSuccessListener {
                     Log.d("AdminChatView", "✅ Metadata updated successfully")
                 }
@@ -209,30 +322,45 @@ class AdminChatViewActivity : AppCompatActivity() {
         }
     }
 
-
-
-    /** Send text-based attachment like a quotation */
     private fun sendTextAttachmentMessage(textContent: String, description: String) {
+        val sender = auth.currentUser ?: return
+
         val message = ChatMessage(
-            senderId = adminEmail,
-            receiverId = userEmail,
+            senderId = sender.uid,
+            receiverId = userId,
             message = description,
             timestamp = System.currentTimeMillis(),
-            attachmentUri = textContent // store text content directly
+            attachmentUri = textContent,
+            quotationId = quotationId
         )
+
         pushMessage(message)
     }
 
-    /** Send file-based attachment (PDF, image, etc.) */
     private fun sendAttachmentMessage(uri: Uri, description: String) {
+        val sender = auth.currentUser ?: return
+
         val message = ChatMessage(
-            senderId = adminEmail,
-            receiverId = userEmail,
+            senderId = sender.uid,
+            receiverId = userId,
             message = description,
             timestamp = System.currentTimeMillis(),
-            attachmentUri = uri.toString()
+            attachmentUri = uri.toString(),
+            quotationId = quotationId
         )
+
         pushMessage(message)
+    }
+
+    // Handle device back button press
+    override fun onBackPressed() {
+        Log.d("AdminChatView", "onBackPressed: Device back button pressed")
+        super.onBackPressed()
+        finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("AdminChatView", "onDestroy: Activity destroyed")
     }
 }
-// (Android Developers, 2025).

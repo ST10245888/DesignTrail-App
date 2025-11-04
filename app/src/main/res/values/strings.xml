@@ -444,6 +444,9 @@ and consistently measurable results aligned with your strategic objectives.
     <string name="update_status">Update Status</string>
     <string name="send_notification">Send Notification</string>
 
+    <!-- Add this line to your existing strings.xml -->
+    <string name="back_button">Back</string>
+
     <!-- Technical -->
     <string name="version">Version</string>
     <string name="build_number">Build Number</string>
