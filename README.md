@@ -53,3 +53,5 @@ This mobile application allows clients to request custom printing and embroidery
 | PDF Generation| HTML2PDF / jsPDF / Custom |
 | Reports       | CSV/XLS Export, Charts |
 
+# DesignTrail-App
+(added a test line to trigger workflow)
