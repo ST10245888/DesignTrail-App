@@ -68,8 +68,10 @@ data class ChatMessage(
     val isQuotationStatusUpdate: Boolean
         get() = isStatusUpdate && quotationId.isNotEmpty()
 
-    val isRead: Boolean
-        get() = read
+    // ❌ Remove this block
+// val isRead: Boolean
+//     get() = read
+
 
     val isDelivered: Boolean
         get() = status == STATUS_DELIVERED
