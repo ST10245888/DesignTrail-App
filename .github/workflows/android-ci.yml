@@ -1,4 +1,4 @@
-name: Android CI
+name: Android CI with SonarCloud
 
 on:
   push:
@@ -7,16 +7,20 @@ on:
   pull_request:
     branches:
       - fkjconsultants
+  workflow_dispatch:
+
 env:
   GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx1536m
 
 jobs:
   build:
-    name: Build & Unit tests
+    name: Build & Unit tests with SonarCloud
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # required for SonarCloud analysis
 
       - name: Cache Gradle
         uses: actions/cache@v4
@@ -40,6 +44,17 @@ jobs:
 
       - name: Build (assembleDebug) + unit tests
         run: ./gradlew clean assembleDebug test --no-daemon --stacktrace
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.organization=YOUR_ORGANIZATION_NAME
+            -Dsonar.projectKey=YOUR_PROJECT_KEY
+            -Dsonar.java.binaries=app/build
 
       - name: Upload debug APK artifact
         uses: actions/upload-artifact@v4
@@ -108,9 +123,3 @@ jobs:
             -Pandroid.injected.signing.key.alias="${{ secrets.RELEASE_KEY_ALIAS }}" \
             -Pandroid.injected.signing.key.password="${{ secrets.RELEASE_KEY_PASSWORD }}" \
             --no-daemon --stacktrace
-
-      - name: Upload release APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-apk
-          path: app/build/outputs/**/*.apk
