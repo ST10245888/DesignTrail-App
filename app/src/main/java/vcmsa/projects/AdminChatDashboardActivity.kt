@@ -103,3 +103,4 @@ class AdminChatDashboardActivity : AppCompatActivity() {
         Log.d(TAG, "Thread loaded/updated: chatId=$chatId, user=$userEmail, lastMessage=$lastMessage, unread=$unreadCount")
     }
 }
+// (Android Developers, 2025).

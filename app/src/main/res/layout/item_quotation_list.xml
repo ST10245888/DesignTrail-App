@@ -6,19 +6,82 @@
     android:orientation="horizontal"
     android:background="?android:attr/selectableItemBackground">
 
-    <TextView
-        android:id="@+id/tvCompany"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Company Name"
-        android:textSize="16sp"
-        android:textStyle="bold"/>
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tvStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Pending"
-        android:textSize="14sp"/>
+        <!-- Company Name and Status in one line -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tvCompany"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Company Name"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:ellipsize="end"
+                android:maxLines="1"/>
+
+            <TextView
+                android:id="@+id/tvStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pending"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"/>
+
+        </LinearLayout>
+
+        <!-- Service Type -->
+        <TextView
+            android:id="@+id/tvServiceType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Service Type"
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:maxLines="1"/>
+
+        <!-- Date and Amount in one line -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="4dp">
+
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Jan 01, 2024"
+                android:textSize="12sp"
+                android:textColor="#999999"/>
+
+            <TextView
+                android:id="@+id/tvAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="R0.00"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#2196F3"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
 </LinearLayout>

@@ -110,6 +110,7 @@ class ChatActivity : AppCompatActivity() {
         metadataRef.child("adminEmails").setValue(adminEmails.map { encodeEmail(it) })
         metadataRef.child("lastMessage").setValue("")
         metadataRef.child("lastTimestamp").setValue(System.currentTimeMillis())
+        metadataRef.child("lastSenderId").setValue("")
         val unreadMap = mutableMapOf<String, Int>()
         adminEmails.forEach { admin -> unreadMap[encodeEmail(admin)] = 0 }
         metadataRef.child("unreadCounts").setValue(unreadMap)
@@ -247,36 +248,47 @@ class ChatActivity : AppCompatActivity() {
         updateChatMetadata(message.message, timestamp)
     }
 
-    /** Update chat metadata */
+    /** Update chat metadata with proper increment logic */
     private fun updateChatMetadata(lastMessage: String, timestamp: Long) {
-        val unreadCounts = mutableMapOf<String, Any>()
-        adminEmails.forEach { email ->
-            if (email != currentUserEmail) {
-                // Increment unread for other admins
-                unreadCounts[encodeEmail(email)] = 1
-            } else {
-                // Keep current admin's count at 0
-                unreadCounts[encodeEmail(email)] = 0
+        val metadataRef = chatRoot.child("metadata")
+
+        // Read current unread counts first, then increment
+        metadataRef.child("unreadCounts").get().addOnSuccessListener { snapshot ->
+            val unreadCounts = mutableMapOf<String, Any>()
+
+            adminEmails.forEach { email ->
+                val encodedEmail = encodeEmail(email)
+                if (email != currentUserEmail) {
+                    // Increment unread count for other admins
+                    val currentCount = snapshot.child(encodedEmail).getValue(Int::class.java) ?: 0
+                    unreadCounts[encodedEmail] = currentCount + 1
+                    Log.d("ChatActivity", "Incrementing unread for $email: $currentCount -> ${currentCount + 1}")
+                } else {
+                    // Keep current admin's count at 0
+                    unreadCounts[encodedEmail] = 0
+                }
             }
+
+            val metadata = mapOf(
+                "chatId" to chatId,
+                "userEmail" to userEmail,
+                "adminEmails" to adminEmails.map { encodeEmail(it) },
+                "lastMessage" to lastMessage,
+                "lastTimestamp" to timestamp,
+                "lastSenderId" to currentUserEmail,
+                "unreadCounts" to unreadCounts
+            )
+
+            metadataRef.updateChildren(metadata)
+                .addOnSuccessListener {
+                    Log.d("ChatActivity", "Metadata updated successfully")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("ChatActivity", "Failed to update metadata: ${e.message}", e)
+                }
+        }.addOnFailureListener { e ->
+            Log.e("ChatActivity", "Failed to read current unread counts: ${e.message}", e)
         }
-
-        val metadata = mapOf(
-            "chatId" to chatId,
-            "userEmail" to userEmail,
-            "adminEmails" to adminEmails.map { encodeEmail(it) },
-            "lastMessage" to lastMessage,
-            "lastTimestamp" to timestamp,
-            "lastSenderId" to currentUserEmail,
-            "unreadCounts" to unreadCounts
-        )
-
-        chatRoot.child("metadata").updateChildren(metadata)
-            .addOnSuccessListener {
-                Log.d("ChatActivity", "Metadata updated")
-            }
-            .addOnFailureListener { e ->
-                Log.e("ChatActivity", "Failed to update metadata: ${e.message}", e)
-            }
     }
 
     private fun setupBottomNavigation() {
@@ -293,7 +305,7 @@ class ChatActivity : AppCompatActivity() {
                 }
                 R.id.nav_messages -> true
                 R.id.nav_profile -> {
-                    startActivity(Intent(this, ProfileAccountActivity::class.java))
+                    startActivity(Intent(this, ProfileActivity::class.java))
                     true
                 }
                 else -> false
@@ -312,3 +324,4 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 }
+// (Android Developers, 2025).

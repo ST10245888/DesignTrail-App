@@ -2,52 +2,104 @@ package vcmsa.projects.fkj_consultants.models
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
- * Data class representing a Quotation.
+ * Comprehensive data class representing a Quotation.
  *
- * TODO for collaborators:
- * 1. Consider validation for mandatory fields like id, userId, companyName, filePath.
- * 2. Add JSON annotations if using Firestore/Realtime Database with different key names.
- * 3. Optionally add a status enum instead of plain string for type safety.
- * 4. Consider adding createdAt / updatedAt timestamps separate from file timestamp.
- * 5. Implement Parcelable carefully if nested objects (QuotationItem) become complex.
+ * Designed for use with both local storage and Firebase Realtime Database / Firestore.
+ * Supports optional nested items, attached design files, and admin management features.
  */
 @Parcelize
 data class Quotation(
+    // Core Identification
     var id: String = "",                 // Unique identifier for quotation
     var userId: String = "",             // Firebase UID of the user
+
+    // Company & Contact Information
     var companyName: String = "",        // Name of the company associated with quotation
+    var customerName: String = "",       // Name of the customer contact
+    var customerEmail: String = "",      // Email of the customer contact
     var address: String = "",            // Company or billing address
-    var email: String = "",              // Contact email
+    var email: String = "",              // Contact email (legacy - prefer customerEmail)
     var phone: String = "",              // Contact phone
     var billTo: String = "",             // Billing information
-    var fileName: String = "",           // Name of the quotation file (e.g., PDF)
-    var filePath: String = "",           // Local device path to quotation file
-    var timestamp: Long = 0L,            // Timestamp of quotation creation or upload
-    var status: String = "Pending",      // Quotation status: Pending, Approved, Rejected
-    var type: String = "",               // Type of quotation (e.g., regular, custom)
-    var serviceType: String? = null,     // Optional: type of service provided
-    var quantity: Int? = null,           // Optional: quantity of items
-    var color: String? = null,           // Optional: color info for items
-    var notes: String? = null,           // Optional: any additional notes
-    var designFileUrl: String? = null,   // Optional: URL to uploaded design file
 
-    // ✅ Added for Firebase Storage / download links
-    var downloadUrl: String? = null,     // Direct download URL from Firebase Storage
-    var fileUrl: String? = null,         // Alternate remote file URL (backup / legacy)
+    // File Management
+    var fileName: String = "",           // Name of the quotation file (e.g., quotation_1234.txt)
+    var filePath: String = "",           // Local path to quotation file
+    var pdfUrl: String = "",             // URL to PDF version of quotation
+    var designFileUrl: String? = null,   // Firebase Storage URL for uploaded design
+    var downloadUrl: String? = null,     // Public download URL from Firebase Storage
+    var fileUrl: String? = null,         // Alternative or legacy remote URL
 
-    var items: List<QuotationItem> = emptyList() // List of individual items in quotation
+    // Quotation Details
+    var timestamp: Long = System.currentTimeMillis(), // Unix timestamp of quotation creation
+    var lastUpdated: Long = System.currentTimeMillis(), // Last modification timestamp
+    var status: String = STATUS_PENDING, // Status: Pending, Approved, Rejected, Completed
+    var type: String = "Regular",        // Type of quotation (e.g., Regular, Custom)
+    var serviceType: String? = null,     // Service category or design type
+    var quantity: Int? = null,           // Number of items requested
+    var color: String? = null,           // Selected color option
+    var notes: String? = null,           // Any extra notes from the user
+
+    // Admin Management
+    var adminNotes: String = "",         // Notes from administrator
+    var adminId: String = "",            // Admin user ID who processed the quotation
+    var approvedAt: Long = 0L,           // Timestamp when approved
+    var rejectedAt: Long = 0L,           // Timestamp when rejected
+
+    // Itemized Details
+    var items: List<QuotationItem> = emptyList() // List of itemized quotation details
 ) : Parcelable {
 
-    /**
-     * Computes the subtotal by summing the total of each QuotationItem.
-     *
-     * TODO:
-     * 1. Consider adding taxes, discounts, or shipping fees for total calculation.
-     * 2. Ensure items list is never null to avoid NullPointerException.
-     * 3. Optionally cache subtotal if performance becomes an issue with many items.
-     */
+    // Calculated Properties
     val subtotal: Double
         get() = items.sumOf { it.total }
+
+    val formattedDate: String
+        get() = SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault()).format(Date(timestamp))
+
+    // Status Helper Properties
+    val isPending: Boolean
+        get() = status == STATUS_PENDING
+
+    val isApproved: Boolean
+        get() = status == STATUS_APPROVED
+
+    val isRejected: Boolean
+        get() = status == STATUS_REJECTED
+
+    /** Helper to calculate formatted total price */
+    fun totalPrice(): Double = subtotal
+
+    /** Returns a short display label for UI lists */
+    fun displayTitle(): String = "${companyName.ifEmpty { "Unknown" }} - ${serviceType ?: "N/A"}"
+
+    /** Returns appropriate color resource for status display */
+    fun getStatusColorResource(): Int {
+        return when (status) {
+            STATUS_APPROVED -> android.R.color.holo_green_light
+            STATUS_REJECTED -> android.R.color.holo_red_light
+            else -> android.R.color.holo_orange_light
+        }
+    }
+
+    companion object {
+        // Status Constants
+        const val STATUS_PENDING = "Pending"
+        const val STATUS_APPROVED = "Approved"
+        const val STATUS_REJECTED = "Rejected"
+
+        /** Validates if a status string is recognized */
+        fun isValidStatus(status: String): Boolean {
+            return status in listOf(STATUS_PENDING, STATUS_APPROVED, STATUS_REJECTED)
+        }
+
+        /** Returns list of all valid status values */
+        fun getStatusList(): List<String> {
+            return listOf(STATUS_PENDING, STATUS_APPROVED, STATUS_REJECTED)
+        }
+    }
 }

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -5,6 +6,49 @@
     android:gravity="end"
     android:layout_margin="6dp">
 
+    <!-- Attachment Section -->
+    <LinearLayout
+        android:id="@+id/attachmentLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:visibility="gone"
+        android:padding="8dp"
+        android:background="@drawable/bg_chat_sent">
+
+        <ImageView
+            android:id="@+id/ivAttachment"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_attachment"
+            android:contentDescription="@string/attachment" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvFileName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvFileSize"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:alpha="0.8" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Message Text -->
     <TextView
         android:id="@+id/tvMessage"
         android:layout_width="wrap_content"
@@ -15,13 +59,36 @@
         android:textSize="15sp"
         android:maxWidth="250dp" />
 
-    <TextView
-        android:id="@+id/tvTime"
+    <!-- Bottom Row: Time and Status -->
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="11sp"
-        android:textColor="@color/grayLight"
-        android:layout_marginTop="2dp"
-        android:layout_gravity="end" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginEnd="4dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="11sp"
+            android:textColor="@color/gray_50"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="4dp" />
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="11sp"
+            android:textColor="@color/textHint"
+            android:layout_marginTop="2dp" />
+    </LinearLayout>
 
 </LinearLayout>

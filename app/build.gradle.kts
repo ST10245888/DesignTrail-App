@@ -49,6 +49,8 @@ dependencies {
     // 🔹 Firebase BOM
     implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
 
+    implementation("com.jakewharton.timber:timber:5.0.1")
+
     // Firebase Modules
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-database-ktx")

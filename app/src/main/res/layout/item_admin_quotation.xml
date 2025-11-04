@@ -1,48 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="12dp"
-    android:background="@android:color/white"
-    android:layout_marginBottom="8dp"
-    android:elevation="2dp">
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@color/cardBackground">
 
-    <TextView
-        android:id="@+id/txtCompany"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Company Name"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:textColor="@android:color/black" />
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <TextView
-        android:id="@+id/txtService"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Service Type"
-        android:textSize="14sp"
-        android:layout_marginTop="4dp"
-        android:textColor="@android:color/darker_gray" />
+        <!-- Status Indicator Bar -->
+        <View
+            android:id="@+id/statusIndicator"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@color/statusPending"
+            android:layout_marginBottom="12dp" />
 
-    <TextView
-        android:id="@+id/txtTotal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Total: R 0.00"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:layout_marginTop="4dp"
-        android:textColor="@android:color/black" />
+        <!-- Header Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/txtStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Pending"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:layout_marginTop="4dp" />
+            <TextView
+                android:id="@+id/txtCompany"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Company Name"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/textPrimary"
+                android:maxLines="1"
+                android:ellipsize="end" />
 
-</LinearLayout>
+            <TextView
+                android:id="@+id/txtStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PENDING"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:background="@drawable/bg_status_pending"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+
+        <!-- Customer Info -->
+        <TextView
+            android:id="@+id/txtCustomer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Customer Name"
+            android:textSize="14sp"
+            android:textColor="@color/textSecondary"
+            android:layout_marginTop="4dp"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <!-- Service Type -->
+        <TextView
+            android:id="@+id/txtService"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Service Type"
+            android:textSize="12sp"
+            android:textColor="@color/textHint"
+            android:layout_marginTop="2dp" />
+
+        <!-- Details Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/txtTotal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="R0.00"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/blue_700" />
+
+            <TextView
+                android:id="@+id/txtItemsCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 items"
+                android:textSize="12sp"
+                android:textColor="@color/textHint"
+                android:layout_marginEnd="8dp" />
+
+            <TextView
+                android:id="@+id/txtDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date"
+                android:textSize="12sp"
+                android:textColor="@color/textHint" />
+
+        </LinearLayout>
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp"
+            android:weightSum="4">
+
+            <Button
+                android:id="@+id/btnApprove"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:text="Approve"
+                android:textSize="12sp"
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="@color/buttonSuccess"
+                android:textColor="@color/buttonSuccessText" />
+
+            <Button
+                android:id="@+id/btnReject"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:text="Reject"
+                android:textSize="12sp"
+                android:layout_marginHorizontal="4dp"
+                android:backgroundTint="@color/buttonDanger"
+                android:textColor="@color/buttonDangerText" />
+
+            <Button
+                android:id="@+id/btnView"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:text="View"
+                android:textSize="12sp"
+                android:layout_marginHorizontal="4dp"
+                android:backgroundTint="@color/buttonPrimary"
+                android:textColor="@color/buttonPrimaryText" />
+
+            <Button
+                android:id="@+id/btnDownload"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:text="PDF"
+                android:textSize="12sp"
+                android:layout_marginStart="4dp"
+                android:backgroundTint="@color/blue_500"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

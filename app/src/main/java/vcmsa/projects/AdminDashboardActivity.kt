@@ -43,10 +43,20 @@ class AdminDashboardActivity : AppCompatActivity() {
     private var chatListenerReference: ChildEventListener? = null
     private val chatUnreadCounts = mutableMapOf<String, Int>()
     private var totalUnreadCount = 0
+    private var isInitialLoad = true // Track if we're still loading existing chats
+    private var initialLoadTimestamp = 0L
 
     private val handler = Handler(Looper.getMainLooper())
     private var bellBlinking = false
     private var blinkRunnable: Runnable? = null
+
+    // Admin email list for checking
+    private val adminEmails = listOf(
+        "kush@gmail.com",
+        "keitumetse01@gmail.com",
+        "malikaOlivia@gmail.com",
+        "JamesJameson@gmail.com"
+    )
 
     // Aggregated notifications
     private val pendingNotifications = mutableMapOf<String, String>() // userEmail -> lastMessage
@@ -162,13 +172,43 @@ class AdminDashboardActivity : AppCompatActivity() {
     private fun handleChatUpdate(snapshot: DataSnapshot) {
         val chatId = snapshot.key ?: return
         val metadata = snapshot.child("metadata")
-        val unreadCount = metadata.child("unreadCount").getValue(Int::class.java) ?: 0
+
+        // Get current admin's email
+        val currentAdminEmail = auth.currentUser?.email ?: return
+        val encodedAdminEmail = encodeEmail(currentAdminEmail)
+
+        // Get unread count for THIS admin specifically from unreadCounts map
+        val unreadCount = metadata.child("unreadCounts")
+            .child(encodedAdminEmail)
+            .getValue(Int::class.java) ?: 0
+
         val userEmail = metadata.child("userEmail").getValue(String::class.java) ?: "User"
         val lastMessage = metadata.child("lastMessage").getValue(String::class.java) ?: ""
         val lastSenderId = metadata.child("lastSenderId").getValue(String::class.java) ?: ""
 
-        if (unreadCount > 0 && lastSenderId != "admin") {
-            if (chatUnreadCounts[chatId] != unreadCount) {
+        // Check if message is from a user (not from any admin)
+        val isFromUser = !isAdminEmail(lastSenderId)
+
+        Log.d(TAG, "═══════════════════════════════════")
+        Log.d(TAG, "📬 CHAT UPDATE RECEIVED")
+        Log.d(TAG, "ChatId: $chatId")
+        Log.d(TAG, "User Email: $userEmail")
+        Log.d(TAG, "Current Admin: $currentAdminEmail")
+        Log.d(TAG, "Encoded Admin: $encodedAdminEmail")
+        Log.d(TAG, "Last Sender: $lastSenderId")
+        Log.d(TAG, "Is From User: $isFromUser")
+        Log.d(TAG, "Unread Count: $unreadCount")
+        Log.d(TAG, "Last Message: $lastMessage")
+        Log.d(TAG, "═══════════════════════════════════")
+
+        if (unreadCount > 0 && isFromUser) {
+            val previousCount = chatUnreadCounts[chatId] ?: 0
+
+            Log.d(TAG, "✅ CONDITION MET: unreadCount=$unreadCount > 0 AND isFromUser=$isFromUser")
+            Log.d(TAG, "Previous count: $previousCount, New count: $unreadCount")
+
+            // Only trigger notification if count actually increased
+            if (previousCount != unreadCount) {
                 chatUnreadCounts[chatId] = unreadCount
                 updateTotalUnreadCount()
                 pingAndBlinkBell()
@@ -177,14 +217,29 @@ class AdminDashboardActivity : AppCompatActivity() {
                 pendingNotifications[userEmail] = lastMessage
                 scheduleAggregatedNotification()
 
-                Log.d(TAG, "🔔 New message from $userEmail: $lastMessage")
+                Log.d(TAG, "🔔 NOTIFICATION TRIGGERED from $userEmail: $lastMessage (count: $previousCount -> $unreadCount)")
+            } else {
+                Log.d(TAG, "⚠️ Count unchanged, skipping notification")
             }
         } else {
-            chatUnreadCounts.remove(chatId)
-            pendingNotifications.remove(userEmail)
-            updateTotalUnreadCount()
-            scheduleAggregatedNotification()
+            Log.d(TAG, "❌ CONDITION NOT MET:")
+            Log.d(TAG, "   - unreadCount > 0: ${unreadCount > 0}")
+            Log.d(TAG, "   - isFromUser: $isFromUser")
+
+            // No unread messages or message from admin - clear this chat
+            if (chatUnreadCounts.containsKey(chatId)) {
+                chatUnreadCounts.remove(chatId)
+                pendingNotifications.remove(userEmail)
+                updateTotalUnreadCount()
+                Log.d(TAG, "✅ Cleared notifications for $userEmail")
+            }
         }
+    }
+
+    private fun encodeEmail(email: String) = email.replace(".", ",")
+
+    private fun isAdminEmail(email: String): Boolean {
+        return adminEmails.any { it.equals(email, ignoreCase = true) }
     }
 
     private fun updateTotalUnreadCount() {
@@ -193,14 +248,17 @@ class AdminDashboardActivity : AppCompatActivity() {
             if (totalUnreadCount > 0) {
                 notificationBadge.visibility = View.VISIBLE
                 notificationBadge.text = if (totalUnreadCount > 99) "99+" else totalUnreadCount.toString()
+                Log.d(TAG, "📊 Total unread: $totalUnreadCount")
             } else {
                 notificationBadge.visibility = View.GONE
+                Log.d(TAG, "📊 No unread messages")
             }
         }
     }
 
     private fun pingAndBlinkBell() {
         runOnUiThread {
+            Log.d(TAG, "🔴 Admin bell ping animation triggered - BLINKING RED")
             ObjectAnimator.ofFloat(notificationBell, "rotation", 0f, 25f, -25f, 0f).apply {
                 duration = 300
                 start()
@@ -214,17 +272,32 @@ class AdminDashboardActivity : AppCompatActivity() {
         bellBlinking = true
         blinkRunnable = object : Runnable {
             override fun run() {
-                notificationBell.alpha = if (notificationBell.alpha == 1f) 0.4f else 1f
+                if (notificationBell.alpha == 1f) {
+                    // Fade out and turn red
+                    notificationBell.alpha = 0.4f
+                    notificationBell.setColorFilter(
+                        getColor(android.R.color.holo_red_dark)
+                    )
+                } else {
+                    // Fade in and turn red
+                    notificationBell.alpha = 1f
+                    notificationBell.setColorFilter(
+                        getColor(android.R.color.holo_red_light)
+                    )
+                }
                 handler.postDelayed(this, 500)
             }
         }
         handler.post(blinkRunnable!!)
+        Log.d(TAG, "🔴 Admin bell blinking RED started")
     }
 
     private fun stopBellBlinking() {
         bellBlinking = false
         blinkRunnable?.let { handler.removeCallbacks(it) }
         notificationBell.alpha = 1f
+        notificationBell.clearColorFilter() // Reset to original color
+        Log.d(TAG, "Admin bell blinking stopped and color reset")
     }
 
     // Schedule the aggregated notification with batching delay
@@ -281,7 +354,9 @@ class AdminDashboardActivity : AppCompatActivity() {
             .setContentIntent(pendingIntent)
             .build()
 
-        notificationManager.notify(1001, notification) // fixed ID to update notification
+        notificationManager.notify(1001, notification) 
+
+        Log.d(TAG, "📲 Push notification sent: $title")
     }
 
     private fun showNotificationPopup() {

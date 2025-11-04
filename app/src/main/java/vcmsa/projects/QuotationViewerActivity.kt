@@ -10,12 +10,14 @@ import android.os.Environment
 import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import vcmsa.projects.fkj_consultants.R
 import vcmsa.projects.fkj_consultants.models.ChatMessage
 import vcmsa.projects.fkj_consultants.models.Quotation
+import vcmsa.projects.fkj_consultants.models.QuotationItem
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -44,6 +46,7 @@ class QuotationViewerActivity : AppCompatActivity() {
     private lateinit var btnViewQuotation: Button
     private lateinit var btnDownload: Button
     private lateinit var btnSendToAdmin: Button
+    private lateinit var btnShare: Button
 
     private var currentQuotation: Quotation? = null
     private var quotationFile: File? = null
@@ -55,6 +58,12 @@ class QuotationViewerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quotation_view)
 
+        setupViews()
+        loadQuotationData()
+        setupButtonListeners()
+    }
+
+    private fun setupViews() {
         etCompanyName = findViewById(R.id.etCompanyName)
         etEmail = findViewById(R.id.etEmail)
         etTel = findViewById(R.id.etTel)
@@ -66,41 +75,137 @@ class QuotationViewerActivity : AppCompatActivity() {
         btnViewQuotation = findViewById(R.id.btnViewQuotation)
         btnDownload = findViewById(R.id.btnDownload)
         btnSendToAdmin = findViewById(R.id.btnSendToAdmin)
+        btnShare = findViewById(R.id.btnShare)
 
+        // Make all fields read-only for viewing
+        etCompanyName.isEnabled = false
+        etEmail.isEnabled = false
+        etTel.isEnabled = false
+        etAddress.isEnabled = false
+        etBillTo.isEnabled = false
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = getString(R.string.quotation_details)
+    }
+
+    private fun loadQuotationData() {
         val quotation = intent.getParcelableExtra<Quotation>("quotation")
         if (quotation != null) {
             currentQuotation = quotation
-            loadQuotationDetails(quotation)
-            setupButtonListeners()
+            Log.d(TAG, "Loading quotation: ${quotation.id}")
+            displayQuotationDetails(quotation)
         } else {
             Log.e(TAG, "No quotation passed to QuotationViewerActivity")
+            Toast.makeText(this, "Error: No quotation data found", Toast.LENGTH_SHORT).show()
+            finish()
         }
     }
 
-    private fun loadQuotationDetails(quotation: Quotation) {
+    private fun displayQuotationDetails(quotation: Quotation) {
+        // Set contact and status info
         etCompanyName.setText(quotation.companyName)
         etEmail.setText(quotation.email)
         etTel.setText(quotation.phone)
         etAddress.setText(quotation.address)
         etBillTo.setText(quotation.billTo)
-        tvStatus.text = quotation.status
-        tvTotal.text = "R%.2f".format(quotation.subtotal)
 
+        tvStatus.text = quotation.status
+        tvTotal.text = "${getString(R.string.total_amount)}: R${"%.2f".format(quotation.subtotal)}"
+
+        // Update status color with enhanced styling
+        updateStatusColor(quotation.status)
+
+        // Populate products with enhanced styling
+        displayProducts(quotation.items)
+
+        // Update title with company name
+        supportActionBar?.title = "${getString(R.string.quotation_details)} - ${quotation.companyName}"
+    }
+
+    private fun displayProducts(items: List<QuotationItem>) {
         productsContainer.removeAllViews()
-        quotation.items.forEach { item ->
-            val tv = TextView(this).apply {
-                text = "${item.name} x${item.quantity} @ R${item.pricePerUnit} = R${item.total}"
-                textSize = 12f
-                setTextColor(resources.getColor(R.color.black, null))
+
+        if (items.isEmpty()) {
+            val emptyView = TextView(this).apply {
+                text = getString(R.string.no_products)
+                setTextColor(ContextCompat.getColor(this@QuotationViewerActivity, R.color.textHint))
+                setPadding(16, 16, 16, 16)
+                textSize = 14f
             }
-            productsContainer.addView(tv)
+            productsContainer.addView(emptyView)
+            return
         }
+
+        // Add header
+        val headerView = TextView(this).apply {
+            text = getString(R.string.product_details)
+            textSize = 16f
+            setTextColor(ContextCompat.getColor(this@QuotationViewerActivity, R.color.textPrimary))
+            setTypeface(typeface, android.graphics.Typeface.BOLD)
+            setPadding(0, 0, 0, 16)
+        }
+        productsContainer.addView(headerView)
+
+        items.forEachIndexed { index, item ->
+            val productView = TextView(this).apply {
+                text = "${index + 1}. ${item.name} x${item.quantity} @ R${"%.2f".format(item.pricePerUnit)} = R${"%.2f".format(item.total)}"
+                textSize = 14f
+                setTextColor(ContextCompat.getColor(this@QuotationViewerActivity, R.color.textSecondary))
+                setPadding(32, 12, 32, 12)
+                background = ContextCompat.getDrawable(
+                    this@QuotationViewerActivity,
+                    if (index % 2 == 0) R.drawable.bg_item_even else R.drawable.bg_item_odd
+                )
+            }
+            productsContainer.addView(productView)
+        }
+    }
+
+    private fun updateStatusColor(status: String) {
+        val color = when (status.lowercase()) {
+            "pending" -> ContextCompat.getColor(this, R.color.statusPending)
+            "approved" -> ContextCompat.getColor(this, R.color.statusApproved)
+            "rejected" -> ContextCompat.getColor(this, R.color.statusRejected)
+            else -> ContextCompat.getColor(this, R.color.textHint)
+        }
+        tvStatus.setTextColor(color)
+
+        // Set status background
+        val background = when (status.lowercase()) {
+            "pending" -> R.drawable.bg_status_pending
+            "approved" -> R.drawable.bg_status_approved
+            "rejected" -> R.drawable.bg_status_rejected
+            else -> R.drawable.bg_status_default
+        }
+        tvStatus.setBackgroundResource(background)
+
+        // Add padding for better appearance
+        tvStatus.setPadding(32, 16, 32, 16)
     }
 
     private fun setupButtonListeners() {
         btnViewQuotation.setOnClickListener { viewQuotation() }
         btnDownload.setOnClickListener { downloadQuotationPDF() }
         btnSendToAdmin.setOnClickListener { sendQuotationToAdmins() }
+        btnShare.setOnClickListener { shareQuotation() }
+    }
+
+    /** ========================= VIEW QUOTATION ========================= */
+    private fun viewQuotation() {
+        currentQuotation?.let { quotation ->
+            val text = createQuotationText(quotation)
+            val tempFile = File(cacheDir, "quotation_view_${quotation.id}.txt")
+            tempFile.writeText(text)
+
+            val uri = FileProvider.getUriForFile(this, "${packageName}.provider", tempFile)
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(uri, "text/plain")
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            startActivity(Intent.createChooser(intent, "View Quotation"))
+        } ?: run {
+            Toast.makeText(this, "No quotation data available", Toast.LENGTH_SHORT).show()
+        }
     }
 
     /** ========================= PDF DOWNLOAD ========================= */
@@ -138,7 +243,7 @@ class QuotationViewerActivity : AppCompatActivity() {
         } ?: Toast.makeText(this, "No quotation data!", Toast.LENGTH_SHORT).show()
     }
 
-    /** Creates PDF */
+    /** Creates PDF with professional styling */
     private fun createQuotationPDF(quotation: Quotation): File? {
         return try {
             val pdfDocument = PdfDocument()
@@ -151,6 +256,7 @@ class QuotationViewerActivity : AppCompatActivity() {
             val leftMargin = 40f
             val rightMargin = 555f
 
+            // Header
             paint.textSize = 24f
             paint.color = Color.parseColor("#00796B")
             paint.isFakeBoldText = true
@@ -162,6 +268,7 @@ class QuotationViewerActivity : AppCompatActivity() {
             canvas.drawText("QUOTATION", leftMargin, yPos, paint)
             yPos += 30f
 
+            // Date and Quotation Number
             paint.textSize = 12f
             paint.isFakeBoldText = false
             val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -169,10 +276,12 @@ class QuotationViewerActivity : AppCompatActivity() {
             canvas.drawText("Quotation #: ${quotation.id}", rightMargin - 150f, yPos, paint)
             yPos += 30f
 
+            // Separator line
             paint.strokeWidth = 2f
             canvas.drawLine(leftMargin, yPos, rightMargin, yPos, paint)
             yPos += 20f
 
+            // Company Details
             paint.textSize = 14f
             paint.isFakeBoldText = true
             canvas.drawText("COMPANY DETAILS", leftMargin, yPos, paint)
@@ -191,11 +300,13 @@ class QuotationViewerActivity : AppCompatActivity() {
             canvas.drawText("Bill To: ${quotation.billTo}", leftMargin, yPos, paint)
             yPos += 30f
 
+            // Products Header
             paint.textSize = 14f
             paint.isFakeBoldText = true
-            canvas.drawText("PRODUCTS", leftMargin, yPos, paint)
+            canvas.drawText("PRODUCTS/SERVICES", leftMargin, yPos, paint)
             yPos += 20f
 
+            // Product Table Header
             paint.textSize = 10f
             paint.color = Color.parseColor("#00796B")
             canvas.drawText("Item", leftMargin, yPos, paint)
@@ -208,16 +319,18 @@ class QuotationViewerActivity : AppCompatActivity() {
             canvas.drawLine(leftMargin, yPos, rightMargin, yPos, paint)
             yPos += 15f
 
+            // Product Items
             paint.color = Color.BLACK
             paint.isFakeBoldText = false
             quotation.items.forEach { item ->
                 canvas.drawText(item.name, leftMargin, yPos, paint)
                 canvas.drawText("${item.quantity}", leftMargin + 200f, yPos, paint)
-                canvas.drawText("R%.2f".format(item.pricePerUnit), leftMargin + 280f, yPos, paint)
-                canvas.drawText("R%.2f".format(item.total), leftMargin + 380f, yPos, paint)
+                canvas.drawText("R${"%.2f".format(item.pricePerUnit)}", leftMargin + 280f, yPos, paint)
+                canvas.drawText("R${"%.2f".format(item.total)}", leftMargin + 380f, yPos, paint)
                 yPos += 18f
             }
 
+            // Total
             yPos += 10f
             canvas.drawLine(leftMargin, yPos, rightMargin, yPos, paint)
             yPos += 20f
@@ -225,17 +338,19 @@ class QuotationViewerActivity : AppCompatActivity() {
             paint.textSize = 14f
             paint.isFakeBoldText = true
             paint.color = Color.parseColor("#00796B")
-            canvas.drawText("TOTAL: R%.2f".format(quotation.subtotal), rightMargin - 150f, yPos, paint)
+            canvas.drawText("TOTAL: R${"%.2f".format(quotation.subtotal)}", rightMargin - 150f, yPos, paint)
             yPos += 30f
 
+            // Status
             paint.textSize = 12f
             paint.color = when (quotation.status.lowercase()) {
                 "approved" -> Color.parseColor("#4CAF50")
                 "pending" -> Color.parseColor("#FF9800")
                 else -> Color.parseColor("#F44336")
             }
-            canvas.drawText("Status: ${quotation.status}", leftMargin, yPos, paint)
+            canvas.drawText("Status: ${quotation.status.uppercase()}", leftMargin, yPos, paint)
 
+            // Footer
             yPos = 800f
             paint.textSize = 9f
             paint.color = Color.GRAY
@@ -244,7 +359,7 @@ class QuotationViewerActivity : AppCompatActivity() {
 
             pdfDocument.finishPage(page)
 
-            val fileName = "Quotation_${quotation.id}_${System.currentTimeMillis()}.pdf"
+            val fileName = "Quotation_${quotation.companyName.replace(" ", "_")}_${System.currentTimeMillis()}.pdf"
             val file = File(cacheDir, fileName)
             pdfDocument.writeTo(FileOutputStream(file))
             pdfDocument.close()
@@ -255,7 +370,7 @@ class QuotationViewerActivity : AppCompatActivity() {
         }
     }
 
-    /** ========================= SEND TO ADMINS (UNIFIED CHAT) ========================= */
+    /** ========================= SEND TO ADMINS ========================= */
     private fun sendQuotationToAdmins() {
         currentQuotation?.let { quotation ->
             try {
@@ -276,7 +391,7 @@ class QuotationViewerActivity : AppCompatActivity() {
 
                 Log.d(TAG, "Quotation file saved: ${file.absolutePath}")
 
-                // Send to unified chat (one chat per user accessed by all admins)
+                // Send to unified chat
                 val database = FirebaseDatabase.getInstance()
                 val userEmail = currentUserEmail
                 val chatId = encodeEmail(userEmail)
@@ -286,10 +401,12 @@ class QuotationViewerActivity : AppCompatActivity() {
                 // Create chat message with attachment
                 val message = ChatMessage(
                     senderId = userEmail,
-                    receiverId = "admins", // All admins will see this
-                    message = "📄 Quotation #${quotation.id} - ${quotation.companyName}",
+                    receiverId = "admins",
+                    message = "📄 Quotation #${quotation.id} - ${quotation.companyName} - Total: R${"%.2f".format(quotation.subtotal)}",
                     timestamp = timestamp,
-                    attachmentUri = quotationText // Store full text content
+                    attachmentUri = quotationText,
+                    quotationId = quotation.id,
+                    type = "quotation"
                 )
 
                 Log.d(TAG, "Pushing message to chat: $chatId")
@@ -314,8 +431,6 @@ class QuotationViewerActivity : AppCompatActivity() {
                         ).show()
 
                         btnSendToAdmin.isEnabled = true
-
-                        // Optional: Open chat activity to show the sent message
                         showSuccessDialog()
                     }
                     .addOnFailureListener { e ->
@@ -329,13 +444,30 @@ class QuotationViewerActivity : AppCompatActivity() {
                     }
 
             } catch (e: Exception) {
-                e.printStackTrace()
                 Log.e(TAG, "Exception in sendQuotationToAdmins: ${e.message}", e)
                 Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
                 btnSendToAdmin.isEnabled = true
             }
         } ?: run {
             Toast.makeText(this, "No quotation data available", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    /** ========================= SHARE QUOTATION ========================= */
+    private fun shareQuotation() {
+        currentQuotation?.let { quotation ->
+            try {
+                val text = createQuotationText(quotation)
+                val shareIntent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, text)
+                    putExtra(Intent.EXTRA_SUBJECT, "Quotation from ${quotation.companyName}")
+                    type = "text/plain"
+                }
+                startActivity(Intent.createChooser(shareIntent, "Share Quotation"))
+            } catch (e: Exception) {
+                Toast.makeText(this, "Error sharing quotation: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -348,12 +480,8 @@ class QuotationViewerActivity : AppCompatActivity() {
                 // Open chat activity
                 val intent = Intent(this, ChatActivity::class.java)
                 startActivity(intent)
-                finish()
             }
-            .setNegativeButton("Close") { dialog, _ ->
-                dialog.dismiss()
-                finish()
-            }
+            .setNegativeButton("Close", null)
             .setCancelable(false)
             .show()
     }
@@ -362,7 +490,7 @@ class QuotationViewerActivity : AppCompatActivity() {
     private fun createQuotationText(quotation: Quotation): String {
         val subtotal = quotation.items.sumOf { it.total }
         return buildString {
-            appendLine("========== QUOTATION ==========")
+            appendLine("========== FKJ CONSULTANTS QUOTATION ==========")
             appendLine()
             appendLine("Quotation #: ${quotation.id}")
             appendLine("Company: ${quotation.companyName}")
@@ -370,7 +498,7 @@ class QuotationViewerActivity : AppCompatActivity() {
             appendLine("Email: ${quotation.email}")
             appendLine("Phone: ${quotation.phone}")
             appendLine("Bill To: ${quotation.billTo}")
-            appendLine("Date: ${SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(Date())}")
+            appendLine("Date: ${SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(Date(quotation.timestamp))}")
             appendLine("Status: ${quotation.status}")
             appendLine()
             appendLine("========== ITEMS ==========")
@@ -378,17 +506,20 @@ class QuotationViewerActivity : AppCompatActivity() {
             quotation.items.forEachIndexed { index, item ->
                 appendLine("${index + 1}. ${item.name}")
                 appendLine("   Quantity: ${item.quantity}")
-                appendLine("   Price per unit: R${String.format("%.2f", item.pricePerUnit)}")
-                appendLine("   Total: R${String.format("%.2f", item.total)}")
+                appendLine("   Price per unit: R${"%.2f".format(item.pricePerUnit)}")
+                appendLine("   Total: R${"%.2f".format(item.total)}")
                 appendLine()
             }
             appendLine("==============================")
-            appendLine("SUBTOTAL: R${String.format("%.2f", subtotal)}")
+            appendLine("SUBTOTAL: R${"%.2f".format(subtotal)}")
             appendLine("==============================")
+            appendLine()
+            appendLine("Thank you for your business!")
+            appendLine("FKJ Consultants")
         }
     }
 
-    /** Update metadata for unified chat - ensures admins see new message */
+    /** Update metadata for unified chat */
     private fun updateUnifiedChatMetadata(
         chatRoot: com.google.firebase.database.DatabaseReference,
         userEmail: String,
@@ -397,7 +528,6 @@ class QuotationViewerActivity : AppCompatActivity() {
     ) {
         val metadataRef = chatRoot.child("metadata")
 
-        // Set unread count to 1 for each admin (they need to be notified)
         val unreadMap = mutableMapOf<String, Any>()
         ADMIN_EMAILS.forEach { adminEmail ->
             unreadMap[encodeEmail(adminEmail)] = 1
@@ -422,20 +552,15 @@ class QuotationViewerActivity : AppCompatActivity() {
             }
     }
 
-    private fun viewQuotation() {
-        currentQuotation?.let { quotation ->
-            val text = createQuotationText(quotation)
-            val tempFile = File(cacheDir, "quotation_view_${quotation.id}.txt")
-            tempFile.writeText(text)
+    private fun encodeEmail(email: String): String = email.replace(".", ",")
 
-            val uri = FileProvider.getUriForFile(this, "${packageName}.provider", tempFile)
-            val intent = Intent(Intent.ACTION_VIEW).apply {
-                setDataAndType(uri, "text/plain")
-                flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-            startActivity(Intent.createChooser(intent, "View Quotation"))
-        }
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 
-    private fun encodeEmail(email: String): String = email.replace(".", ",")
+    override fun onBackPressed() {
+        super.onBackPressed()
+        supportFinishAfterTransition()
+    }
 }

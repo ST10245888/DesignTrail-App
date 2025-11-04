@@ -37,6 +37,9 @@ class QuotationAdapter(
         private val txtStatus: TextView = itemView.findViewById(R.id.txtStatus)
         private val txtSubtotal: TextView = itemView.findViewById(R.id.txtSubtotal)
         private val txtCompany: TextView = itemView.findViewById(R.id.txtCompany)
+        private val btnView: Button = itemView.findViewById(R.id.btnView)
+        private val btnDownload: Button = itemView.findViewById(R.id.btnDownload)
+        private val btnSend: Button = itemView.findViewById(R.id.btnSend)
         private val btnDetails: Button = itemView.findViewById(R.id.btnDetails)
 
         fun bind(quotation: Quotation) {
@@ -48,32 +51,113 @@ class QuotationAdapter(
                 SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault()).format(date)
             } else "No date available"
 
-            // Animate status color
+            // Enhanced status color animation with fallback colors
             val previousColor = txtStatus.currentTextColor
             txtStatus.text = quotation.status
 
             val targetColor = when (quotation.status.lowercase(Locale.ROOT)) {
-                "pending" -> ContextCompat.getColor(itemView.context, android.R.color.holo_orange_dark)
-                "approved" -> ContextCompat.getColor(itemView.context, android.R.color.holo_green_dark)
-                "rejected" -> ContextCompat.getColor(itemView.context, android.R.color.holo_red_dark)
-                else -> ContextCompat.getColor(itemView.context, android.R.color.darker_gray)
+                "pending" -> ContextCompat.getColor(
+                    itemView.context,
+                    R.color.statusPending ?: android.R.color.holo_orange_dark
+                )
+                "approved" -> ContextCompat.getColor(
+                    itemView.context,
+                    R.color.statusApproved ?: android.R.color.holo_green_dark
+                )
+                "rejected" -> ContextCompat.getColor(
+                    itemView.context,
+                    R.color.statusRejected ?: android.R.color.holo_red_dark
+                )
+                else -> ContextCompat.getColor(
+                    itemView.context,
+                    R.color.textHint ?: android.R.color.darker_gray
+                )
             }
 
             if (previousColor != targetColor) {
                 ValueAnimator.ofObject(ArgbEvaluator(), previousColor, targetColor).apply {
                     duration = 600
-                    addUpdateListener { animation -> txtStatus.setTextColor(animation.animatedValue as Int) }
+                    addUpdateListener { animation ->
+                        txtStatus.setTextColor(animation.animatedValue as Int)
+                    }
                     start()
                 }
             }
 
-            // Click listeners
+            // Set status background with fallback
+            val statusBackground = when (quotation.status.lowercase(Locale.ROOT)) {
+                "pending" -> R.drawable.bg_status_pending
+                "approved" -> R.drawable.bg_status_approved
+                "rejected" -> R.drawable.bg_status_rejected
+                else -> R.drawable.bg_status_default
+            }
+            txtStatus.setBackgroundResource(statusBackground)
 
+            // Click listeners with enhanced feedback
+            btnView.setOnClickListener {
+                animateButtonClick(btnView) { openFile(itemView.context, quotation) }
+            }
+            btnDownload.setOnClickListener {
+                animateButtonClick(btnDownload) { downloadFile(itemView.context, quotation) }
+            }
+            btnSend.setOnClickListener {
+                animateButtonClick(btnSend) { onSendClick(quotation, currentUserId, receiverId) }
+            }
             btnDetails.setOnClickListener {
-                val context = itemView.context
-                val intent = Intent(context, QuotationViewerActivity::class.java)
-                intent.putExtra("quotation", quotation)
-                context.startActivity(intent)
+                animateButtonClick(btnDetails) {
+                    val context = itemView.context
+                    val intent = Intent(context, QuotationViewerActivity::class.java)
+                    intent.putExtra("quotation", quotation)
+                    context.startActivity(intent)
+                }
+            }
+
+            // Update button states based on status
+            updateButtonStates(quotation.status)
+        }
+
+        private fun animateButtonClick(button: Button, action: () -> Unit) {
+            button.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(100)
+                .withEndAction {
+                    button.animate()
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .setDuration(100)
+                        .start()
+                    action()
+                }
+                .start()
+        }
+
+        private fun updateButtonStates(status: String) {
+            when (status.lowercase(Locale.ROOT)) {
+                "approved" -> {
+                    btnView.setBackgroundColor(ContextCompat.getColor(itemView.context,
+                        R.color.buttonSuccess ?: android.R.color.holo_green_dark))
+                    btnDownload.setBackgroundColor(ContextCompat.getColor(itemView.context,
+                        R.color.buttonSuccess ?: android.R.color.holo_green_dark))
+                    btnSend.setBackgroundColor(ContextCompat.getColor(itemView.context,
+                        R.color.buttonSuccess ?: android.R.color.holo_green_dark))
+                }
+                "rejected" -> {
+                    btnView.setBackgroundColor(ContextCompat.getColor(itemView.context,
+                        R.color.buttonDanger ?: android.R.color.holo_red_dark))
+                    btnDownload.setBackgroundColor(ContextCompat.getColor(itemView.context,
+                        R.color.buttonDanger ?: android.R.color.holo_red_dark))
+                    btnSend.setBackgroundColor(ContextCompat.getColor(itemView.context,
+                        R.color.buttonDanger ?: android.R.color.holo_red_dark))
+                }
+                else -> {
+                    btnView.setBackgroundColor(ContextCompat.getColor(itemView.context,
+                        R.color.buttonPrimary ?: android.R.color.holo_blue_dark))
+                    btnDownload.setBackgroundColor(ContextCompat.getColor(itemView.context,
+                        R.color.blue_500 ?: android.R.color.holo_blue_light))
+                    btnSend.setBackgroundColor(ContextCompat.getColor(itemView.context,
+                        R.color.blue_100 ?: android.R.color.holo_orange_dark))
+                }
             }
         }
     }
@@ -139,6 +223,11 @@ class QuotationAdapter(
                 }
             }
             Toast.makeText(context, "File saved to Downloads: ${destFile.name}", Toast.LENGTH_LONG).show()
+
+            // Optionally notify the system about the new file for MediaScanner
+            val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+            mediaScanIntent.data = Uri.fromFile(destFile)
+            context.sendBroadcast(mediaScanIntent)
         } catch (e: Exception) {
             Toast.makeText(context, "Error saving file: ${e.message}", Toast.LENGTH_SHORT).show()
         }
