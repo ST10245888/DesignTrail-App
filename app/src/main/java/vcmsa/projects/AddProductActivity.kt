@@ -99,6 +99,7 @@ class AddProductActivity : AppCompatActivity() {
         val price = etProductPrice.text.toString().trim()
         val quantity = etProductQuantity.text.toString().trim()
 
+        //(Nielsen, 2020)
         when {
             name.isEmpty() -> {
                 etProductName.error = "Name is required"
@@ -145,6 +146,7 @@ class AddProductActivity : AppCompatActivity() {
             show()
         }
 
+        // (Google Developers, 2024)
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val imageUrl = pickedImageUri?.let { uploadImageToFirebase(it) } ?: ""
@@ -156,35 +158,34 @@ class AddProductActivity : AppCompatActivity() {
                     description = description,
                     color = color,
                     size = size,
-                    price = price, // Already a Double
-                    quantity = quantity, // Already an Int
+                    price = price,
+                    quantity = quantity,
                     category = category,
                     availability = availability,
                     imageUrl = imageUrl,
                     timestamp = System.currentTimeMillis()
                 )
 
-                // Save as proper types
                 val productMap = mapOf(
                     "productId" to product.productId,
                     "name" to product.name,
                     "description" to product.description,
                     "color" to product.color,
                     "size" to product.size,
-                    "price" to product.price, // Double
-                    "quantity" to product.quantity, // Int
+                    "price" to product.price,
+                    "quantity" to product.quantity,
                     "category" to product.category,
                     "availability" to product.availability,
                     "imageUrl" to product.imageUrl,
-                    "timestamp" to product.timestamp // Long
+                    "timestamp" to product.timestamp
                 )
 
+                // (JetBrains, 2023)
                 newRef.setValue(productMap).await()
 
                 withContext(Dispatchers.Main) {
                     progress.dismiss()
 
-                    // Pass the new product back to InventoryActivity
                     val resultIntent = Intent().apply {
                         putExtra("productId", product.productId)
                         putExtra("name", product.name)
@@ -242,3 +243,13 @@ class AddProductActivity : AppCompatActivity() {
         }
     }
 }
+
+/**
+ * References
+ *
+ * Google Developers .2024. Cloud Firestore documentation. Available at: https://firebase.google.com/docs/firestore (Accessed: 4 November 2025).
+ *
+ * JetBrains. 2023. Kotlin coroutines overview. Available at: https://kotlinlang.org/docs/coroutines-overview.html (Accessed: 4 November 2025).
+ *
+ * Nielsen, J. 2020 10 Usability Heuristics for User Interface Design. Nielsen Norman Group. Available at: https://www.nngroup.com/articles/ten-usability-heuristics/ (Accessed: 4 November 2025).
+ */

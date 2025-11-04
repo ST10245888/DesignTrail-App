@@ -18,6 +18,7 @@ import java.util.*
 
 class UserQuotationViewActivity : AppCompatActivity() {
 
+    // Declare UI components (Android Developers, 2024)
     private lateinit var scrollView: ScrollView
     private lateinit var logoImage: ImageView
     private lateinit var productsContainer: LinearLayout
@@ -32,21 +33,22 @@ class UserQuotationViewActivity : AppCompatActivity() {
     private lateinit var btnSendToAdmin: Button
     private lateinit var btnViewQuotation: Button
 
+    // Firebase database reference (Google Firebase, 2024)
     private lateinit var database: DatabaseReference
     private var quotationId: String? = null
     private var currentQuotation: Quotation? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) { // Lifecycle method (Android Developers, 2024)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quotation_view)
 
-        initializeViews()
-        setupDatabase()
-        loadIntentData()
-        setupClickListeners()
+        initializeViews() // Initialize all UI views
+        setupDatabase() // Connect to Firebase database
+        loadIntentData() // Load quotation data passed via intent
+        setupClickListeners() // Set up user interaction events
     }
 
-    private fun initializeViews() {
+    private fun initializeViews() { // Maps XML elements to Kotlin variables (Android Developers, 2024)
         scrollView = findViewById(R.id.scrollView)
         logoImage = findViewById(R.id.logoImage)
         productsContainer = findViewById(R.id.productsContainer)
@@ -62,21 +64,22 @@ class UserQuotationViewActivity : AppCompatActivity() {
         btnViewQuotation = findViewById(R.id.btnViewQuotation)
     }
 
-    private fun setupDatabase() {
+    private fun setupDatabase() { // Setup Firebase database reference (Google Firebase, 2024)
         database = FirebaseDatabase.getInstance().getReference("quotations")
     }
 
-    private fun loadIntentData() {
+    private fun loadIntentData() { // Retrieve quotation data from intent (Android Developers, 2024)
         quotationId = intent.getStringExtra("quotationId")
         currentQuotation = intent.getParcelableExtra("quotation")
 
-        val currentUser = FirebaseAuth.getInstance().currentUser
-        if (currentUser == null) {
+        val currentUser = FirebaseAuth.getInstance().currentUser // Get current user (Firebase Authentication, 2024)
+        if (currentUser == null) { // Handle unauthenticated access
             Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
 
+        // Load quotation data based on the provided identifier
         when {
             quotationId != null -> loadQuotationFromFirebase(quotationId!!, currentUser.uid)
             currentQuotation != null -> {
@@ -91,7 +94,7 @@ class UserQuotationViewActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupClickListeners() {
+    private fun setupClickListeners() { // Handle button click events (Kotlinlang.org, 2024)
         btnDownload.setOnClickListener {
             currentQuotation?.let { downloadQuotation(it) }
         }
@@ -105,10 +108,10 @@ class UserQuotationViewActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadQuotationFromFirebase(id: String, userId: String) {
+    private fun loadQuotationFromFirebase(id: String, userId: String) { // Load quotation from database (Firebase Realtime Database, 2024)
         database.child(id)
             .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
+                override fun onDataChange(snapshot: DataSnapshot) { // Handle data retrieval success
                     if (!snapshot.exists()) {
                         Toast.makeText(
                             this@UserQuotationViewActivity,
@@ -118,7 +121,7 @@ class UserQuotationViewActivity : AppCompatActivity() {
                         return
                     }
 
-                    val quotation = snapshot.getValue(Quotation::class.java)
+                    val quotation = snapshot.getValue(Quotation::class.java) // Deserialize data (Google Firebase, 2024)
                     if (quotation == null) {
                         Toast.makeText(
                             this@UserQuotationViewActivity,
@@ -142,7 +145,7 @@ class UserQuotationViewActivity : AppCompatActivity() {
                     }
                 }
 
-                override fun onCancelled(error: DatabaseError) {
+                override fun onCancelled(error: DatabaseError) { // Handle data read failure
                     Toast.makeText(
                         this@UserQuotationViewActivity,
                         "Error loading quotation: ${error.message}",
@@ -152,7 +155,7 @@ class UserQuotationViewActivity : AppCompatActivity() {
             })
     }
 
-    private fun displayQuotation(quotation: Quotation) {
+    private fun displayQuotation(quotation: Quotation) { // Populate UI with quotation details (Android Developers, 2024)
         etCompanyName.setText(quotation.companyName)
         etEmail.setText(quotation.email)
         etTel.setText(quotation.phone)
@@ -161,11 +164,11 @@ class UserQuotationViewActivity : AppCompatActivity() {
 
         tvTotal.text = "Total: R${String.format("%.2f", quotation.subtotal)}"
         tvStatus.text = "Status: ${quotation.status}"
-        updateStatusColor(quotation.status)
+        updateStatusColor(quotation.status) // Change color according to status
         displayProducts(quotation.items)
     }
 
-    private fun displayProducts(items: List<QuotationItem>?) {
+    private fun displayProducts(items: List<QuotationItem>?) { // Display product list dynamically (Android Developers, 2024)
         productsContainer.removeAllViews()
 
         if (items.isNullOrEmpty()) {
@@ -188,7 +191,7 @@ class UserQuotationViewActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateStatusColor(status: String) {
+    private fun updateStatusColor(status: String) { // Update status text color (Android Developers, 2024)
         tvStatus.setTextColor(
             when (status.lowercase(Locale.ROOT)) {
                 "pending" -> getColor(android.R.color.holo_orange_dark)
@@ -199,7 +202,7 @@ class UserQuotationViewActivity : AppCompatActivity() {
         )
     }
 
-    private fun getPdfUri(pdfFile: File): Uri? {
+    private fun getPdfUri(pdfFile: File): Uri? { // Generate secure URI using FileProvider (Android Developers, 2024)
         return try {
             FileProvider.getUriForFile(
                 this,
@@ -213,7 +216,7 @@ class UserQuotationViewActivity : AppCompatActivity() {
         }
     }
 
-    private fun downloadQuotation(quotation: Quotation) {
+    private fun downloadQuotation(quotation: Quotation) { // Generate and save PDF (GeeksforGeeks, 2024)
         val pdfFile = PdfGenerator.generateQuotationPdf(this, quotation)
         if (!pdfFile.exists()) {
             Toast.makeText(this, "PDF generation failed", Toast.LENGTH_SHORT).show()
@@ -222,7 +225,7 @@ class UserQuotationViewActivity : AppCompatActivity() {
         Toast.makeText(this, "PDF saved at: ${pdfFile.absolutePath}", Toast.LENGTH_LONG).show()
     }
 
-    private fun openMessagingPage(quotation: Quotation) {
+    private fun openMessagingPage(quotation: Quotation) { // Send quotation to admin chat (Google Firebase, 2024)
         val pdfFile = PdfGenerator.generateQuotationPdf(this, quotation)
         if (!pdfFile.exists()) {
             Toast.makeText(this, "PDF generation failed", Toast.LENGTH_SHORT).show()
@@ -240,7 +243,7 @@ class UserQuotationViewActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun viewQuotation(quotation: Quotation) {
+    private fun viewQuotation(quotation: Quotation) { // Open PDF file in viewer (Android Developers, 2024)
         val pdfFile = PdfGenerator.generateQuotationPdf(this, quotation)
         if (!pdfFile.exists()) {
             Toast.makeText(this, "PDF generation failed", Toast.LENGTH_SHORT).show()
@@ -261,3 +264,22 @@ class UserQuotationViewActivity : AppCompatActivity() {
         }
     }
 }
+
+/*
+Reference List
+
+Android Developers, 2024. Activity Lifecycle and UI Components. [online] Available at: <https://developer.android.com/guide/components/activities> [Accessed 25 September 2025].
+
+Android Developers, 2024. FileProvider | Android Developers Documentation. [online] Available at: <https://developer.android.com/reference/androidx/core/content/FileProvider> [Accessed 21 October 2025].
+
+Google Firebase, 2024. Firebase Realtime Database Guide. [online] Available at: <https://firebase.google.com/docs/database/android/start> [Accessed 29 August 2025].
+
+Google Firebase, 2024. Firebase Authentication Overview. [online] Available at: <https://firebase.google.com/docs/auth/android/start> [Accessed 25 September 2025].
+
+Kotlinlang.org, 2024. Kotlin Android Development Guide. [online] Available at: <https://kotlinlang.org/docs/android-overview.html> [Accessed 24 September 2025].
+
+GeeksforGeeks, 2024. Generate PDF in Android Using iText or PdfDocument API. [online] Available at: <https://www.geeksforgeeks.org/generate-pdf-file-in-android-using-itextpdf/> [Accessed 24 September 2025].
+
+Android Developers, 2024. Intents and Intent Filters in Android. [online] Available at: <https://developer.android.com/guide/components/intents-filters> [Accessed 24 September 2025].
+
+*/

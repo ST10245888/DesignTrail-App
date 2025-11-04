@@ -395,3 +395,4 @@ class ChatMessageAdapter(
         }
     }
 }
+// (AbhiAndroid, n.d.).
