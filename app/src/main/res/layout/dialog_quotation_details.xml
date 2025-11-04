@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -18,7 +19,7 @@
             android:id="@+id/logoImage"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@drawable/ic_placeholder"
+            android:src="@drawable/ic_fkj_logo"
             android:contentDescription="FKJ Logo" />
 
         <LinearLayout
@@ -88,8 +89,9 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginBottom="16dp"
         android:layout_weight="1"
-        android:layout_marginBottom="16dp">
+        tools:ignore="SpeakableTextPresentCheck">
 
         <LinearLayout
             android:id="@+id/productsContainer"
@@ -118,13 +120,14 @@
     <EditText
         android:id="@+id/edtCompanyName"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/edit_text_background"
         android:hint="Company Name"
         android:inputType="textPersonName"
-        android:background="@drawable/edit_text_background"
         android:paddingHorizontal="12dp"
-        android:textSize="12sp"
-        android:layout_marginBottom="8dp" />
+        android:textColor="@color/black"
+        android:textSize="14sp" />
 
     <!-- Email and Phone Row -->
     <LinearLayout
@@ -137,24 +140,28 @@
             android:id="@+id/edtEmail"
             android:layout_width="0dp"
             android:layout_height="40dp"
+            android:layout_marginEnd="8dp"
             android:layout_weight="1"
+            android:background="@drawable/edit_text_background"
             android:hint="Email"
             android:inputType="textEmailAddress"
-            android:background="@drawable/edit_text_background"
             android:paddingHorizontal="12dp"
-            android:textSize="12sp"
-            android:layout_marginEnd="8dp" />
+            android:textColor="#020202"
+            android:textSize="14sp"
+            tools:ignore="TouchTargetSizeCheck" />
 
         <EditText
             android:id="@+id/edtPhone"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="1"
+            android:background="@drawable/edit_text_background"
             android:hint="Tel"
             android:inputType="phone"
-            android:background="@drawable/edit_text_background"
             android:paddingHorizontal="12dp"
-            android:textSize="12sp" />
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            tools:ignore="TouchTargetSizeCheck" />
     </LinearLayout>
 
     <!-- Address Section -->
@@ -171,14 +178,15 @@
         android:id="@+id/edtAddress"
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/edit_text_background"
+        android:gravity="top"
         android:hint="Full Address"
         android:inputType="textPostalAddress|textMultiLine"
-        android:background="@drawable/edit_text_background"
         android:paddingHorizontal="12dp"
         android:paddingVertical="8dp"
-        android:textSize="12sp"
-        android:gravity="top"
-        android:layout_marginBottom="8dp" />
+        android:textColor="@color/black"
+        android:textSize="14sp" />
 
     <!-- Bill To Section -->
     <TextView
@@ -193,13 +201,14 @@
     <EditText
         android:id="@+id/edtBillTo"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/edit_text_background"
         android:hint="Bill To (optional)"
         android:inputType="textPersonName"
-        android:background="@drawable/edit_text_background"
         android:paddingHorizontal="12dp"
-        android:textSize="12sp"
-        android:layout_marginBottom="16dp" />
+        android:textColor="@color/black"
+        android:textSize="14sp" />
 
     <!-- Generate Button -->
 

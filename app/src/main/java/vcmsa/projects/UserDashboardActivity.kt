@@ -21,6 +21,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -30,54 +31,41 @@ import vcmsa.projects.fkj_consultants.models.ChatMessage
 class UserDashboardActivity : AppCompatActivity() {
 
     companion object {
-        var instance: UserDashboardActivity? = null
-        var unreadMessageCount = 0
         private const val CHANNEL_ID = "chat_notifications"
         private const val CHANNEL_NAME = "Chat Messages"
         private const val TAG = "UserDashboardActivity"
-
-        /**
-         * Updates the notification badge when a new message arrives or is cleared.
-         */
-        fun updateNotificationBadgeStatic(show: Boolean) {
-            instance?.runOnUiThread {
-                if (show) {
-                    unreadMessageCount++
-                    instance?.notificationBadge?.visibility = View.VISIBLE
-                    instance?.notificationBadge?.text =
-                        if (unreadMessageCount > 99) "99+" else unreadMessageCount.toString()
-                    instance?.pingAndBlinkBell()
-                    Log.d(TAG, "Badge updated: $unreadMessageCount unread message(s).")
-                } else {
-                    unreadMessageCount = 0
-                    instance?.notificationBadge?.visibility = View.GONE
-                    instance?.stopBellBlinking()
-                    Log.d(TAG, "Badge reset and bell stopped blinking.")
-                }
-            }
-        }
     }
 
     private lateinit var auth: FirebaseAuth
     private lateinit var bottomNavigationView: BottomNavigationView
     private lateinit var notificationBell: ImageView
-    lateinit var notificationBadge: TextView
+    private lateinit var notificationBadge: TextView
 
     private var chatRef: DatabaseReference? = null
     private var chatListener: ChildEventListener? = null
     private val handler = Handler(Looper.getMainLooper())
     private var bellBlinking = false
     private var blinkRunnable: Runnable? = null
-    private var lastAdminMessageKey: String? = null // Prevent duplicate message triggers
+
+    private var unreadMessageCount = 0
+    private val processedMessageKeys = mutableSetOf<String>()
+    private var isInitialLoad = true // Track if we're still loading existing messages
+    private var initialLoadTimestamp = 0L
+
+    private val adminEmails = listOf(
+        "kush@gmail.com",
+        "keitumetse01@gmail.com",
+        "malikaOlivia@gmail.com",
+        "JamesJameson@gmail.com"
+    )
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_dashboard)
 
-        Log.i(TAG, "UserDashboardActivity created.")
+        Log.i(TAG, "UserDashboardActivity created")
 
-        instance = this
         auth = FirebaseAuth.getInstance()
         bottomNavigationView = findViewById(R.id.bottom_navigation)
         notificationBell = findViewById(R.id.notificationBell)
@@ -90,14 +78,14 @@ class UserDashboardActivity : AppCompatActivity() {
         auth.currentUser?.let { user ->
             Log.d(TAG, "Authenticated user: ${user.email}")
             if (isAdmin(user.email)) {
-                Log.i(TAG, "Admin detected. Redirecting to AdminDashboardActivity.")
+                Log.i(TAG, "Admin detected. Redirecting to AdminDashboardActivity")
                 startActivity(Intent(this, AdminDashboardActivity::class.java))
                 finish()
                 return
             }
-            listenForAdminReplies(user.uid)
+            listenForAdminReplies(user.email!!)
         } ?: run {
-            Log.w(TAG, "No user authenticated. Redirecting to LoginActivity.")
+            Log.w(TAG, "No user authenticated. Redirecting to LoginActivity")
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
             return
@@ -107,28 +95,52 @@ class UserDashboardActivity : AppCompatActivity() {
     }
 
     private fun isAdmin(email: String?) =
-        email != null && LoginActivity.ADMIN_EMAILS.any { it.equals(email, true) }
+        email != null && adminEmails.any { it.equals(email, ignoreCase = true) }
+
+    private fun encodeEmail(email: String) = email.replace(".", ",")
 
     /**
-     * Starts listening for new messages from the admin in the user's chat thread.
+     * Starts listening for new messages from admins in the user's chat thread.
      */
-    private fun listenForAdminReplies(userId: String) {
-        val adminId = "admin"
-        val chatId = if (userId < adminId) "${userId}_$adminId" else "${adminId}_$userId"
-        chatRef = FirebaseDatabase.getInstance().getReference("chats/$chatId/messages")
-        Log.d(TAG, "Listening for admin replies in chat path: $chatId")
+    private fun listenForAdminReplies(userEmail: String) {
+        val chatId = encodeEmail(userEmail)
+        chatRef = FirebaseDatabase.getInstance().getReference("chats").child(chatId).child("messages")
+
+        Log.d(TAG, "═══════════════════════════════════")
+        Log.d(TAG, "👤 USER DASHBOARD INITIALIZED")
+        Log.d(TAG, "User Email: $userEmail")
+        Log.d(TAG, "Chat ID: $chatId")
+        Log.d(TAG, "Listening for admin replies at: chats/$chatId/messages")
+        Log.d(TAG, "═══════════════════════════════════")
 
         chatListener = object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val msgKey = snapshot.key ?: return
                 val msg = snapshot.getValue(ChatMessage::class.java) ?: return
-                Log.d(TAG, "New message snapshot detected with key: $msgKey")
 
-                // Process only new admin messages
-                if (msg.senderId == "admin" && msgKey != lastAdminMessageKey) {
-                    lastAdminMessageKey = msgKey
-                    Log.i(TAG, "New admin message: ${msg.message}")
+                // Skip if already processed
+                if (processedMessageKeys.contains(msgKey)) {
+                    return
+                }
+
+                // Check if message is from an admin
+                val isFromAdmin = isAdmin(msg.senderId)
+
+                Log.d(TAG, "───────────────────────────────────")
+                Log.d(TAG, "📨 NEW MESSAGE DETECTED")
+                Log.d(TAG, "Message Key: $msgKey")
+                Log.d(TAG, "Sender: ${msg.senderId}")
+                Log.d(TAG, "Is From Admin: $isFromAdmin")
+                Log.d(TAG, "Message: ${msg.message.take(50)}")
+                Log.d(TAG, "───────────────────────────────────")
+
+                // Process only admin messages (not user's own messages)
+                if (isFromAdmin && msg.senderId != userEmail) {
+                    processedMessageKeys.add(msgKey)
+                    Log.i(TAG, "🔔 NEW ADMIN MESSAGE RECEIVED")
                     onNewAdminMessage(msg.message)
+                } else {
+                    Log.d(TAG, "⏭️ Skipping: User's own message or not from admin")
                 }
             }
 
@@ -144,13 +156,31 @@ class UserDashboardActivity : AppCompatActivity() {
     }
 
     /**
-     * Called whenever the admin sends a new message.
+     * Called whenever an admin sends a new message.
      */
-    fun onNewAdminMessage(message: String) {
+    private fun onNewAdminMessage(message: String) {
         Log.i(TAG, "Processing new admin message: ${message.take(40)}")
-        updateNotificationBadgeStatic(true)
+        unreadMessageCount++
+        updateNotificationBadge()
+        pingAndBlinkBell()
         showSystemNotification(message)
-        Toast.makeText(this, "New message from Admin: ${message.take(40)}", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "New message from Admin", Toast.LENGTH_SHORT).show()
+    }
+
+    /**
+     * Updates the notification badge display
+     */
+    private fun updateNotificationBadge() {
+        runOnUiThread {
+            if (unreadMessageCount > 0) {
+                notificationBadge.visibility = View.VISIBLE
+                notificationBadge.text = if (unreadMessageCount > 99) "99+" else unreadMessageCount.toString()
+                Log.d(TAG, "📊 Badge updated: $unreadMessageCount unread message(s)")
+            } else {
+                notificationBadge.visibility = View.GONE
+                Log.d(TAG, "📊 Badge hidden: no unread messages")
+            }
+        }
     }
 
     /**
@@ -165,7 +195,9 @@ class UserDashboardActivity : AppCompatActivity() {
         }
         val pendingIntent = PendingIntent.getActivity(
             this, 0, intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            else PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
@@ -179,7 +211,7 @@ class UserDashboardActivity : AppCompatActivity() {
             .build()
 
         notificationManager.notify(System.currentTimeMillis().toInt(), notification)
-        Log.d(TAG, "System notification displayed for new admin message.")
+        Log.d(TAG, "📲 System notification displayed for new admin message")
     }
 
     /**
@@ -192,46 +224,62 @@ class UserDashboardActivity : AppCompatActivity() {
             )
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(channel)
-            Log.d(TAG, "Notification channel '$CHANNEL_NAME' created.")
+            Log.d(TAG, "Notification channel '$CHANNEL_NAME' created")
         }
     }
 
     /**
-     * Animates the bell icon and starts blinking when a new message arrives.
+     * Animates the bell icon and starts blinking RED when a new message arrives.
      */
     private fun pingAndBlinkBell() {
-        Log.d(TAG, "Bell ping animation triggered.")
-        ObjectAnimator.ofFloat(notificationBell, "rotation", 0f, 25f, -25f, 0f).apply {
-            duration = 400
-            start()
+        runOnUiThread {
+            Log.d(TAG, "🔴 Bell ping animation triggered - BLINKING RED")
+            ObjectAnimator.ofFloat(notificationBell, "rotation", 0f, 25f, -25f, 0f).apply {
+                duration = 400
+                start()
+            }
+            startBellBlinking()
         }
-        startBellBlinking()
     }
 
     /**
-     * Starts blinking effect on the bell icon for unread messages.
+     * Starts RED blinking effect on the bell icon for unread messages.
      */
     private fun startBellBlinking() {
         if (bellBlinking) return
         bellBlinking = true
+
         blinkRunnable = object : Runnable {
             override fun run() {
-                notificationBell.alpha = if (notificationBell.alpha == 1f) 0.4f else 1f
+                if (notificationBell.alpha == 1f) {
+                    // Fade out and turn red
+                    notificationBell.alpha = 0.4f
+                    notificationBell.setColorFilter(
+                        ContextCompat.getColor(this@UserDashboardActivity, android.R.color.holo_red_dark)
+                    )
+                } else {
+                    // Fade in and turn red
+                    notificationBell.alpha = 1f
+                    notificationBell.setColorFilter(
+                        ContextCompat.getColor(this@UserDashboardActivity, android.R.color.holo_red_light)
+                    )
+                }
                 handler.postDelayed(this, 500)
             }
         }
         handler.post(blinkRunnable!!)
-        Log.d(TAG, "Bell blinking started.")
+        Log.d(TAG, "🔴 Bell blinking RED started")
     }
 
     /**
-     * Stops the blinking effect on the bell icon.
+     * Stops the blinking effect on the bell icon and resets color.
      */
     private fun stopBellBlinking() {
         bellBlinking = false
         blinkRunnable?.let { handler.removeCallbacks(it) }
         notificationBell.alpha = 1f
-        Log.d(TAG, "Bell blinking stopped.")
+        notificationBell.clearColorFilter() // Reset to original color
+        Log.d(TAG, "Bell blinking stopped and color reset")
     }
 
     /**
@@ -239,19 +287,19 @@ class UserDashboardActivity : AppCompatActivity() {
      */
     private fun setupClickListeners() {
         findViewById<Button>(R.id.btnCatalog).setOnClickListener {
-            Log.d(TAG, "Navigating to CatalogActivity.")
+            Log.d(TAG, "Navigating to CatalogActivity")
             startActivity(Intent(this, CatalogActivity::class.java))
         }
         findViewById<Button>(R.id.btnQuotations).setOnClickListener {
-            Log.d(TAG, "Navigating to QuotationActivity.")
+            Log.d(TAG, "Navigating to QuotationActivity")
             startActivity(Intent(this, QuotationActivity::class.java))
         }
         findViewById<Button>(R.id.btnMessaging).setOnClickListener {
-            Log.d(TAG, "Navigating to ChatActivity via button.")
+            Log.d(TAG, "Navigating to ChatActivity via button")
             openChatActivity()
         }
         findViewById<Button>(R.id.btnLogout).setOnClickListener {
-            Log.i(TAG, "User logged out.")
+            Log.i(TAG, "User logged out")
             auth.signOut()
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
@@ -263,7 +311,7 @@ class UserDashboardActivity : AppCompatActivity() {
      * Opens the chat activity and resets unread message indicators.
      */
     private fun openChatActivity() {
-        Log.d(TAG, "Opening chat activity, resetting badge and bell.")
+        Log.d(TAG, "Opening chat activity, resetting badge and bell")
         unreadMessageCount = 0
         notificationBadge.visibility = View.GONE
         stopBellBlinking()
@@ -275,7 +323,7 @@ class UserDashboardActivity : AppCompatActivity() {
      */
     private fun showNotificationPopup() {
         val hasNew = unreadMessageCount > 0
-        Log.d(TAG, "Notification popup opened. Has new: $hasNew")
+        Log.d(TAG, "Notification popup opened. Has new: $hasNew, Count: $unreadMessageCount")
         AlertDialog.Builder(this)
             .setTitle(if (hasNew) "New Messages" else "No New Messages")
             .setMessage(if (hasNew) "You have $unreadMessageCount unread message(s). Go to chat?" else "No new messages.")
@@ -293,12 +341,20 @@ class UserDashboardActivity : AppCompatActivity() {
                 R.id.nav_home -> true
                 R.id.nav_catalog -> { startActivity(Intent(this, CatalogActivity::class.java)); true }
                 R.id.nav_dashboard -> true
-                R.id.nav_messages -> { startActivity(Intent(this, ChatActivity::class.java)); true }
+                R.id.nav_messages -> { openChatActivity(); true }
                 R.id.nav_profile -> { startActivity(Intent(this, ProfileActivity::class.java)); true }
                 else -> false
             }
         }
-        Log.d(TAG, "Bottom navigation initialized.")
+        Log.d(TAG, "Bottom navigation initialized")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Clear processed messages when returning to dashboard
+        // so we can detect new messages that arrived while away
+        processedMessageKeys.clear()
+        Log.d(TAG, "Activity resumed, cleared processed message cache")
     }
 
     /**
@@ -308,7 +364,6 @@ class UserDashboardActivity : AppCompatActivity() {
         super.onDestroy()
         chatListener?.let { chatRef?.removeEventListener(it) }
         stopBellBlinking()
-        instance = null
-        Log.i(TAG, "UserDashboardActivity destroyed and listeners removed.")
+        Log.i(TAG, "UserDashboardActivity destroyed and listeners removed")
     }
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/adminDashboardLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -171,12 +172,13 @@
                     <Button
                         android:id="@+id/btnUserQuotations"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="65dp"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:minHeight="48dp"
                         android:text="User Quotations"
-                        android:textSize="16sp"
                         android:textColor="#1B2C4A"
-                        android:textStyle="bold"
-                        android:background="?android:attr/selectableItemBackground"/>
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -207,13 +209,15 @@
 
                     <Button
                         android:id="@+id/btnInventory"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="145dp"
+                        android:layout_height="76dp"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:minHeight="48dp"
                         android:text="Inventory"
-                        android:textSize="16sp"
                         android:textColor="#1B2C4A"
+                        android:textSize="16sp"
                         android:textStyle="bold"
-                        android:background="?android:attr/selectableItemBackground"/>
+                        tools:ignore="TouchTargetSizeCheck" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -234,22 +238,23 @@
                     android:gravity="center"
                     android:padding="20dp">
 
+                    <Button
+                        android:id="@+id/btnMessaging"
+                        android:layout_width="148dp"
+                        android:layout_height="73dp"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:minHeight="48dp"
+                        android:text="Messaging"
+                        android:textColor="#1B2C4A"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
                     <ImageView
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:src="@drawable/ic_messaging"
                         android:contentDescription="Messaging Icon"
                         android:layout_marginBottom="8dp" />
-
-                    <Button
-                        android:id="@+id/btnMessaging"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Messaging"
-                        android:textSize="16sp"
-                        android:textColor="#1B2C4A"
-                        android:textStyle="bold"
-                        android:background="?android:attr/selectableItemBackground"/>
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

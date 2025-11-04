@@ -144,3 +144,4 @@ class QuotationAdapter(
         }
     }
 }
+// (Millard, 2025).

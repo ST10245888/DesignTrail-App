@@ -90,3 +90,4 @@ class ChatThreadAdapter(
         }
     }
 }
+// (AbhiAndroid, n.d.).

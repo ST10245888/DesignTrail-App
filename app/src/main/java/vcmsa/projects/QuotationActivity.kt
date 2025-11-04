@@ -140,3 +140,4 @@ class QuotationActivity : AppCompatActivity() {
         }
     }
 }
+// (Android Developers, 2025).

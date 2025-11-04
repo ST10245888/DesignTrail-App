@@ -439,3 +439,4 @@ class QuotationViewerActivity : AppCompatActivity() {
 
     private fun encodeEmail(email: String): String = email.replace(".", ",")
 }
+// (Android Developers, 2025).

@@ -7,3 +7,4 @@ data class ChatMessage(
     var timestamp: Long = 0L,
     var attachmentUri: String? = null
 )
+// (codezup , 2025).

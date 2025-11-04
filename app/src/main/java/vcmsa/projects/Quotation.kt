@@ -6,12 +6,8 @@ import kotlinx.parcelize.Parcelize
 /**
  * Data class representing a Quotation.
  *
- * TODO for collaborators:
- * 1. Consider validation for mandatory fields like id, userId, companyName, filePath.
- * 2. Add JSON annotations if using Firestore/Realtime Database with different key names.
- * 3. Optionally add a status enum instead of plain string for type safety.
- * 4. Consider adding createdAt / updatedAt timestamps separate from file timestamp.
- * 5. Implement Parcelable carefully if nested objects (QuotationItem) become complex.
+ * Designed for use with both local storage and Firebase Realtime Database / Firestore.
+ * Supports optional nested items and attached design files.
  */
 @Parcelize
 data class Quotation(
@@ -22,32 +18,34 @@ data class Quotation(
     var email: String = "",              // Contact email
     var phone: String = "",              // Contact phone
     var billTo: String = "",             // Billing information
-    var fileName: String = "",           // Name of the quotation file (e.g., PDF)
-    var filePath: String = "",           // Local device path to quotation file
-    var timestamp: Long = 0L,            // Timestamp of quotation creation or upload
-    var status: String = "Pending",      // Quotation status: Pending, Approved, Rejected
-    var type: String = "",               // Type of quotation (e.g., regular, custom)
-    var serviceType: String? = null,     // Optional: type of service provided
-    var quantity: Int? = null,           // Optional: quantity of items
-    var color: String? = null,           // Optional: color info for items
-    var notes: String? = null,           // Optional: any additional notes
-    var designFileUrl: String? = null,   // Optional: URL to uploaded design file
 
-    // ✅ Added for Firebase Storage / download links
-    var downloadUrl: String? = null,     // Direct download URL from Firebase Storage
-    var fileUrl: String? = null,         // Alternate remote file URL (backup / legacy)
+    var fileName: String = "",           // Name of the quotation file (e.g., quotation_1234.txt)
+    var filePath: String = "",           // Local path to quotation file
+    var timestamp: Long = 0L,            // Unix timestamp of quotation creation or upload
+    var status: String = "Pending",      // Status: Pending, Approved, Rejected, Completed
 
-    var items: List<QuotationItem> = emptyList() // List of individual items in quotation
+    var type: String = "Regular",        // Type of quotation (e.g., Regular, Custom)
+    var serviceType: String? = null,     // Service category or design type
+    var quantity: Int? = null,           // Number of items requested
+    var color: String? = null,           // Selected color option
+    var notes: String? = null,           // Any extra notes from the user
+
+    var designFileUrl: String? = null,   // Firebase Storage URL for uploaded design
+    var downloadUrl: String? = null,     // Public download URL from Firebase Storage
+    var fileUrl: String? = null,         // Alternative or legacy remote URL
+
+    // List of itemized quotation details (optional)
+    var items: List<QuotationItem> = emptyList()
 ) : Parcelable {
 
-    /**
-     * Computes the subtotal by summing the total of each QuotationItem.
-     *
-     * TODO:
-     * 1. Consider adding taxes, discounts, or shipping fees for total calculation.
-     * 2. Ensure items list is never null to avoid NullPointerException.
-     * 3. Optionally cache subtotal if performance becomes an issue with many items.
-     */
+    /** Calculates subtotal by summing totals from all quotation items. */
     val subtotal: Double
         get() = items.sumOf { it.total }
+
+    /** Helper to calculate formatted total price */
+    fun totalPrice(): Double = subtotal
+
+    /** Returns a short display label for UI lists */
+    fun displayTitle(): String = "${companyName.ifEmpty { "Unknown" }} - ${serviceType ?: "N/A"}"
 }
+// (GeeksForGeeks, 2025).

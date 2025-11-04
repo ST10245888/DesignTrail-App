@@ -183,3 +183,4 @@ object ChatUtils {
 
     private fun encodeEmail(email: String): String = email.replace(".", ",")
 }
+// (GeeksForGeeks, 2024).

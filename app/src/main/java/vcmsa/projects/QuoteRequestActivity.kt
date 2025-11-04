@@ -1,6 +1,11 @@
 package vcmsa.projects.fkj_consultants.activities
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.pdf.PdfDocument
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,7 +15,11 @@ import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import vcmsa.projects.fkj_consultants.R
+import vcmsa.projects.fkj_consultants.models.Quotation
+import vcmsa.projects.fkj_consultants.models.QuotationItem
 import java.io.File
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -36,7 +45,6 @@ class QuoteRequestActivity : AppCompatActivity() {
     private var selectedFileUri: Uri? = null
     private var serviceType: String = ""
 
-    // Fixed price per item (R190)
     private val pricePerItem = 190.0
 
     private val colors = listOf(
@@ -80,8 +88,8 @@ class QuoteRequestActivity : AppCompatActivity() {
 
         setupColorSpinner()
 
-        btnUploadDesign.setOnClickListener { filePicker.launch("*/*") }
-        btnSubmit.setOnClickListener { saveQuotationLocally() }
+        btnUploadDesign.setOnClickListener { filePicker.launch("image/*") }
+        btnSubmit.setOnClickListener { saveQuotationAndUpload() }
     }
 
     private fun setupColorSpinner() {
@@ -89,10 +97,8 @@ class QuoteRequestActivity : AppCompatActivity() {
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
                 val view = convertView ?: LayoutInflater.from(context)
                     .inflate(R.layout.item_colour_spinner, parent, false)
-
                 val colorView = view.findViewById<View>(R.id.viewColor)
                 val txtColor = view.findViewById<TextView>(R.id.txtColorName)
-
                 val item = getItem(position)
                 if (item != null) {
                     colorView.setBackgroundColor(android.graphics.Color.parseColor(item.hex))
@@ -104,10 +110,8 @@ class QuoteRequestActivity : AppCompatActivity() {
             override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
                 val view = convertView ?: LayoutInflater.from(context)
                     .inflate(R.layout.item_colour_spinner, parent, false)
-
                 val colorView = view.findViewById<View>(R.id.viewColor)
                 val txtColor = view.findViewById<TextView>(R.id.txtColorName)
-
                 val item = getItem(position)
                 if (item != null) {
                     colorView.setBackgroundColor(android.graphics.Color.parseColor(item.hex))
@@ -116,11 +120,10 @@ class QuoteRequestActivity : AppCompatActivity() {
                 return view
             }
         }
-
         spinnerColors.adapter = adapter
     }
 
-    private fun saveQuotationLocally() {
+    private fun saveQuotationAndUpload() {
         val quantityStr = edtQuantity.text.toString().trim()
         val notes = edtNotes.text.toString().trim()
         val company = edtCompany.text.toString().trim()
@@ -141,56 +144,122 @@ class QuoteRequestActivity : AppCompatActivity() {
             return
         }
 
-        // Calculate subtotal
         val subtotal = quantity * pricePerItem
         val currencyFormat = NumberFormat.getCurrencyInstance(Locale("en", "ZA"))
         val subtotalFormatted = currencyFormat.format(subtotal)
+        val timestamp = System.currentTimeMillis()
+        val dateFormatted = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(Date(timestamp))
 
         try {
             val dir = File(getExternalFilesDir(null), "quotations")
             if (!dir.exists()) dir.mkdirs()
 
-            val fileName = "quotation_${System.currentTimeMillis()}.txt"
+            val fileName = "quotation_$timestamp.pdf"
             val file = File(dir, fileName)
-            val date = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(Date())
 
-            file.bufferedWriter().use { out ->
-                out.write("QUOTATION\n")
-                out.write("==========================\n")
-                out.write("Company: $company\n")
-                out.write("Address: $address\n")
-                out.write("Email: $email\n")
-                out.write("Phone: $phone\n")
-                out.write("Bill To: $billTo\n")
-                out.write("Service: $serviceType\n")
-                out.write("Quantity: $quantity\n")
-                out.write("Color: $color\n")
-                out.write("Notes: $notes\n")
-                out.write("Price per Item: ${currencyFormat.format(pricePerItem)}\n")
-                out.write("Subtotal: $subtotalFormatted\n")
-                out.write("File Attached: ${selectedFileUri?.lastPathSegment ?: "None"}\n")
-                out.write("Status: Pending\n")
-                out.write("Date: $date\n")
+            // --- Generate PDF with user image ---
+            val pdfDocument = PdfDocument()
+            val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create() // A4
+            val page = pdfDocument.startPage(pageInfo)
+            val canvas: Canvas = page.canvas
+            val paint = Paint()
+
+            // Header
+            paint.textSize = 18f
+            paint.isFakeBoldText = true
+            canvas.drawText("FKJ CONSULTANTS - Quotation", 40f, 50f, paint)
+
+            paint.textSize = 14f
+            paint.isFakeBoldText = false
+            var y = 90f
+            fun drawLine(label: String, value: String) {
+                canvas.drawText("$label $value", 40f, y, paint)
+                y += 25f
             }
 
-            AlertDialog.Builder(this)
-                .setTitle("Quotation Saved")
-                .setMessage("Quotation saved locally at:\n${file.absolutePath}\n\nSubtotal: $subtotalFormatted")
-                .setPositiveButton("Open") { _, _ ->
-                    val fileUri = androidx.core.content.FileProvider.getUriForFile(
-                        this,
-                        "${applicationContext.packageName}.provider",
-                        file
-                    )
+            drawLine("Date:", dateFormatted)
+            drawLine("Company:", company)
+            drawLine("Address:", address)
+            drawLine("Email:", email)
+            drawLine("Phone:", phone)
+            drawLine("Bill To:", billTo)
+            drawLine("Service:", serviceType)
+            drawLine("Quantity:", quantity.toString())
+            drawLine("Color:", color)
+            drawLine("Notes:", notes)
+            drawLine("Price per Item:", currencyFormat.format(pricePerItem))
+            drawLine("Subtotal:", subtotalFormatted)
 
-                    val intent = Intent(Intent.ACTION_VIEW).apply {
-                        setDataAndType(fileUri, "text/plain")
-                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            // Draw uploaded image
+            selectedFileUri?.let { uri ->
+                contentResolver.openInputStream(uri)?.use { input ->
+                    val bitmap = BitmapFactory.decodeStream(input)
+                    bitmap?.let {
+                        val scaled = Bitmap.createScaledBitmap(it, 200, 200, true)
+                        canvas.drawBitmap(scaled, 40f, y + 20f, paint)
+                        y += 240f
                     }
-                    startActivity(Intent.createChooser(intent, "Open Quotation"))
                 }
-                .setNegativeButton("Close", null)
-                .show()
+            }
+
+            pdfDocument.finishPage(page)
+            pdfDocument.writeTo(file.outputStream())
+            pdfDocument.close()
+
+            // --- Upload to Firebase ---
+            val auth = FirebaseAuth.getInstance()
+            val currentUser = auth.currentUser ?: run {
+                Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            val userId = currentUser.uid
+            val dbRef = FirebaseDatabase.getInstance().getReference("quotations")
+            val quotationId = dbRef.push().key ?: UUID.randomUUID().toString()
+
+            val quotationItem = QuotationItem(
+                productId = "ITEM-$timestamp",
+                name = serviceType,
+                pricePerUnit = pricePerItem,
+                quantity = quantity,
+                color = color,
+                description = notes
+            )
+
+            val quotation = Quotation(
+                id = quotationId,
+                userId = userId,
+                companyName = company,
+                address = address,
+                email = email,
+                phone = phone,
+                billTo = billTo,
+                serviceType = serviceType,
+                color = color,
+                notes = notes,
+                quantity = quantity,
+                items = listOf(quotationItem),
+                fileName = fileName,
+                filePath = file.absolutePath,
+                timestamp = timestamp,
+                status = "Pending"
+            )
+
+            dbRef.child(quotationId).setValue(quotation)
+                .addOnSuccessListener {
+                    AlertDialog.Builder(this)
+                        .setTitle("Quotation Submitted")
+                        .setMessage("Quotation successfully submitted!\nSubtotal: $subtotalFormatted")
+                        .setPositiveButton("View My Quotations") { _, _ ->
+                            startActivity(Intent(this, QuotationActivity::class.java))
+                            finish()
+                        }
+                        .setNegativeButton("Close", null)
+                        .show()
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(this, "Failed to upload: ${e.message}", Toast.LENGTH_LONG).show()
+                }
 
         } catch (e: Exception) {
             e.printStackTrace()
@@ -198,3 +267,4 @@ class QuoteRequestActivity : AppCompatActivity() {
         }
     }
 }
+// (Android Developers, 2025).

@@ -16,7 +16,6 @@
         android:background="@color/white"
         android:gravity="center_vertical">
 
-        <!-- Back Button -->
         <ImageView
             android:id="@+id/btnBack"
             android:layout_width="wrap_content"
@@ -27,14 +26,12 @@
             android:src="@drawable/ic_arrow_back"
             app:tint="@color/teal_700" />
 
-        <!-- Logo -->
         <ImageView
             android:id="@+id/logoImage"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:src="@drawable/ic_fkj_logo"
             android:contentDescription="FKJ Logo"
-
             android:layout_marginStart="12dp" />
 
         <LinearLayout
@@ -72,7 +69,6 @@
         android:gravity="center"
         android:padding="12dp" />
 
-    <!-- ScrollView for Content -->
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
@@ -139,7 +135,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Products Section -->
+            <!-- PRODUCTS -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -156,6 +152,42 @@
                 android:orientation="vertical"
                 android:layout_marginBottom="16dp" />
 
+            <!-- ✅ Uploaded Logo / Design Preview -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="UPLOADED LOGO / DESIGN PREVIEW"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#2C3E50"
+                android:layout_marginBottom="8dp" />
+
+            <LinearLayout
+                android:id="@+id/logoPreviewSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp">
+
+                <ImageView
+                    android:id="@+id/imgLogoPreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:scaleType="centerInside"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Uploaded Logo Preview" />
+
+                <TextView
+                    android:id="@+id/tvLogoFileName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="No logo uploaded"
+                    android:textAlignment="center"
+                    android:textColor="#666"
+                    android:layout_marginTop="8dp" />
+            </LinearLayout>
+
             <!-- Divider -->
             <View
                 android:layout_width="match_parent"
@@ -163,7 +195,7 @@
                 android:background="#CCCCCC"
                 android:layout_marginBottom="16dp" />
 
-            <!-- Contact Details Section -->
+            <!-- CONTACT DETAILS -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -173,6 +205,7 @@
                 android:textColor="#2C3E50"
                 android:layout_marginBottom="12dp" />
 
+            <!-- Contact fields (company, email, etc.) -->
             <EditText
                 android:id="@+id/etCompanyName"
                 android:layout_width="match_parent"

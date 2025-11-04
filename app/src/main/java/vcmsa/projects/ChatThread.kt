@@ -9,3 +9,4 @@ data class ChatThread(
     val userId: String,
     val unreadCount: Int = 0
 )
+// (codezup , 2025).

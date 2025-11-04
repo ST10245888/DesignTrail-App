@@ -94,3 +94,4 @@ class ChatAdapter(
         }
     }
 }
+// (AbhiAndroid, n.d.).
